@@ -6,3 +6,9 @@ Make sure you have installed Eigen before compiling. If not install with Homebre
 ```
 brew install eigen
 ```
+
+You will need the following addons
+
+* [ofxDropdown](https://github.com/roymacdonald/ofxDropdown/)
+
+Make sure you have it updated
