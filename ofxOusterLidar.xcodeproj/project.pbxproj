@@ -9,9 +9,7 @@
 /* Begin PBXBuildFile section */
 		13CF9644D9B97EAD9D976E6E /* lidar_scan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D35F1373615F67E5222CDF2D /* lidar_scan.cpp */; };
 		1CD33E884D9E3358252E82A1 /* ofxToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 907C5B5E104864A2D3A25745 /* ofxToggle.cpp */; };
-		29252A055E8729AF9DF06B4F /* compat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28CF48F250508299457596F1 /* compat.cpp */; };
 		32B14739873D68D2F2FEF2A4 /* types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC37C13C61CA45B481CF13A4 /* types.cpp */; };
-		3F34493A3C8C7A90BACC3AAA /* ofxOusterBatchData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D55E13AA1A95CCE5A4E26B3 /* ofxOusterBatchData.cpp */; };
 		41844C0055480033EC690467 /* ofxOuster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E663AD656BB77AE78E31BD3A /* ofxOuster.cpp */; };
 		483908258D00B98B4BE69F07 /* ofxLabel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 78D67A00EB899FAC09430597 /* ofxLabel.cpp */; };
 		5CBB2AB3A60F65431D7B555D /* ofxButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C88333E71C9457E441C33474 /* ofxButton.cpp */; };
@@ -24,6 +22,7 @@
 		B266578FC55D23BFEBC042E7 /* ofxGuiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ECF8674C7975F1063C5E30CA /* ofxGuiGroup.cpp */; };
 		B56FE57CC35806596D38118C /* ofxSliderGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 802251BAF1B35B1D67B32FD0 /* ofxSliderGroup.cpp */; };
 		D4738610BDB62319476A987B /* ofxOusterRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1F6FB6F57DA2FBB7101D2A8 /* ofxOusterRenderer.cpp */; };
+		D6275EA75C6994F28A99323C /* netcompat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 105AD95EB90F769E8125678A /* netcompat.cpp */; };
 		E03BE61A20EDC60FA3DF893F /* ofxDropdown.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 09CE0CDFCC647DF97EC06861 /* ofxDropdown.cpp */; };
 		E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */; };
 		E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */; };
@@ -45,23 +44,22 @@
 /* Begin PBXFileReference section */
 		09CE0CDFCC647DF97EC06861 /* ofxDropdown.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxDropdown.cpp; path = ../../../addons/ofxDropdown/src/ofxDropdown.cpp; sourceTree = SOURCE_ROOT; };
 		0A1DAC09F322AE313A40706D /* ofxToggle.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxToggle.h; path = ../../../addons/ofxGui/src/ofxToggle.h; sourceTree = SOURCE_ROOT; };
+		105AD95EB90F769E8125678A /* netcompat.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = netcompat.cpp; path = src/ouster/netcompat.cpp; sourceTree = SOURCE_ROOT; };
 		15F2C6477A769C03A56D1401 /* ofxSlider.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxSlider.cpp; path = ../../../addons/ofxGui/src/ofxSlider.cpp; sourceTree = SOURCE_ROOT; };
 		17E65988300FBD9AAA2CD0CA /* ofxGui.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxGui.h; path = ../../../addons/ofxGui/src/ofxGui.h; sourceTree = SOURCE_ROOT; };
 		181D363B6DD54D1FA6309C43 /* ofxColorPicker.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxColorPicker.cpp; path = ../../../addons/ofxGui/src/ofxColorPicker.cpp; sourceTree = SOURCE_ROOT; };
 		1C0DA2561397A7DE0246858B /* ofxGuiGroup.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxGuiGroup.h; path = ../../../addons/ofxGui/src/ofxGuiGroup.h; sourceTree = SOURCE_ROOT; };
 		2834D88A62CD23F3DE2C47D1 /* ofxButton.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxButton.h; path = ../../../addons/ofxGui/src/ofxButton.h; sourceTree = SOURCE_ROOT; };
-		28CF48F250508299457596F1 /* compat.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = compat.cpp; path = src/ouster/impl/compat.cpp; sourceTree = SOURCE_ROOT; };
-		30291FB43C4347278D7E164C /* packet_impl.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = packet_impl.h; path = src/ouster/impl/packet_impl.h; sourceTree = SOURCE_ROOT; };
 		44B351490B620D04E1E7C52D /* ofxInputField.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxInputField.cpp; path = ../../../addons/ofxGui/src/ofxInputField.cpp; sourceTree = SOURCE_ROOT; };
 		489B196944B06ADC2A071076 /* ofxColorPicker.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxColorPicker.h; path = ../../../addons/ofxGui/src/ofxColorPicker.h; sourceTree = SOURCE_ROOT; };
-		4D6B5AE591469C23B9D40C84 /* packet.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = packet.h; path = src/ouster/packet.h; sourceTree = SOURCE_ROOT; };
 		52AFA1F08C420992CAAAE648 /* ofxSlider.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxSlider.h; path = ../../../addons/ofxGui/src/ofxSlider.h; sourceTree = SOURCE_ROOT; };
 		54E079CFA3C7876D98A1349F /* ofxDropdownOption.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxDropdownOption.cpp; path = ../../../addons/ofxDropdown/src/ofxDropdownOption.cpp; sourceTree = SOURCE_ROOT; };
 		621A20A03DFCFF7C975B368D /* version.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = version.h; path = src/ouster/version.h; sourceTree = SOURCE_ROOT; };
 		64A294AFB51A923172E0AA11 /* lidar_scan.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = lidar_scan.h; path = src/ouster/lidar_scan.h; sourceTree = SOURCE_ROOT; };
-		67488B95B3A6FBF807FA053C /* compat.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = compat.h; path = src/ouster/impl/compat.h; sourceTree = SOURCE_ROOT; };
+		6DA6FDF52838ED9581013A51 /* netcompat.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = netcompat.h; path = src/ouster/impl/netcompat.h; sourceTree = SOURCE_ROOT; };
 		724070E54CCA0F6FAAE36551 /* client.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = client.h; path = src/ouster/client.h; sourceTree = SOURCE_ROOT; };
 		78D67A00EB899FAC09430597 /* ofxLabel.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxLabel.cpp; path = ../../../addons/ofxGui/src/ofxLabel.cpp; sourceTree = SOURCE_ROOT; };
+		7B695F00DA7E0612EFFDEEC8 /* parsing.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = parsing.h; path = src/ouster/impl/parsing.h; sourceTree = SOURCE_ROOT; };
 		802251BAF1B35B1D67B32FD0 /* ofxSliderGroup.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxSliderGroup.cpp; path = ../../../addons/ofxGui/src/ofxSliderGroup.cpp; sourceTree = SOURCE_ROOT; };
 		87F26B4B24CBD428AD9EEBAA /* ofxBaseGui.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxBaseGui.h; path = ../../../addons/ofxGui/src/ofxBaseGui.h; sourceTree = SOURCE_ROOT; };
 		89449E3044D456F7DE7BEA14 /* ofxPanel.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxPanel.h; path = ../../../addons/ofxGui/src/ofxPanel.h; sourceTree = SOURCE_ROOT; };
@@ -70,7 +68,6 @@
 		9473B94A2AB54D9AE4FA0702 /* ofxOusterRenderer.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxOusterRenderer.hpp; path = src/ofxOusterRenderer.hpp; sourceTree = SOURCE_ROOT; };
 		95AA6C1C9DAFF1E232EEC08D /* ofxDropdown.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxDropdown.h; path = ../../../addons/ofxDropdown/src/ofxDropdown.h; sourceTree = SOURCE_ROOT; };
 		9604B925D32EE39065747725 /* ofxBaseGui.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxBaseGui.cpp; path = ../../../addons/ofxGui/src/ofxBaseGui.cpp; sourceTree = SOURCE_ROOT; };
-		9D55E13AA1A95CCE5A4E26B3 /* ofxOusterBatchData.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxOusterBatchData.cpp; path = src/ofxOusterBatchData.cpp; sourceTree = SOURCE_ROOT; };
 		AE68B54581BE4A1DAE853180 /* ofxInputField.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxInputField.h; path = ../../../addons/ofxGui/src/ofxInputField.h; sourceTree = SOURCE_ROOT; };
 		B1F6FB6F57DA2FBB7101D2A8 /* ofxOusterRenderer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxOusterRenderer.cpp; path = src/ofxOusterRenderer.cpp; sourceTree = SOURCE_ROOT; };
 		B7390288BF3FA12BE8D09437 /* client.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = client.cpp; path = src/ouster/client.cpp; sourceTree = SOURCE_ROOT; };
@@ -83,7 +80,6 @@
 		CEEE86A1DD21070722A2D8F4 /* autoexposure.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = autoexposure.h; path = src/ouster/autoexposure.h; sourceTree = SOURCE_ROOT; };
 		D35F1373615F67E5222CDF2D /* lidar_scan.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = lidar_scan.cpp; path = src/ouster/lidar_scan.cpp; sourceTree = SOURCE_ROOT; };
 		D3B6071123AB8406BAA57495 /* types.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = types.h; path = src/ouster/types.h; sourceTree = SOURCE_ROOT; };
-		DAA936DA179367139B733A93 /* ofxOusterBatchData.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxOusterBatchData.hpp; path = src/ofxOusterBatchData.hpp; sourceTree = SOURCE_ROOT; };
 		DC37C13C61CA45B481CF13A4 /* types.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = types.cpp; path = src/ouster/types.cpp; sourceTree = SOURCE_ROOT; };
 		E112B3AEBEA2C091BF2B40AE /* ofxPanel.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxPanel.cpp; path = ../../../addons/ofxGui/src/ofxPanel.cpp; sourceTree = SOURCE_ROOT; };
 		E42962AC2163EDD300A6A9E2 /* ofCamera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ofCamera.cpp; path = ../../../libs/openFrameworks/3d/ofCamera.cpp; sourceTree = SOURCE_ROOT; };
@@ -270,7 +266,6 @@
 		E663AD656BB77AE78E31BD3A /* ofxOuster.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxOuster.cpp; path = src/ofxOuster.cpp; sourceTree = SOURCE_ROOT; };
 		EC9C9EE7C4C81468117E80C8 /* colormaps.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = colormaps.h; path = src/ouster/colormaps.h; sourceTree = SOURCE_ROOT; };
 		ECF8674C7975F1063C5E30CA /* ofxGuiGroup.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxGuiGroup.cpp; path = ../../../addons/ofxGui/src/ofxGuiGroup.cpp; sourceTree = SOURCE_ROOT; };
-		F70E0B73042ADA14CAC23D2C /* client_impl.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = client_impl.h; path = src/ouster/impl/client_impl.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -287,6 +282,7 @@
 		1093CAB842ADC9C1EC351BC7 /* ouster */ = {
 			isa = PBXGroup;
 			children = (
+				105AD95EB90F769E8125678A /* netcompat.cpp */,
 				F64353197431F960EEA3F81C /* impl */,
 				DC37C13C61CA45B481CF13A4 /* types.cpp */,
 				724070E54CCA0F6FAAE36551 /* client.h */,
@@ -297,7 +293,6 @@
 				D35F1373615F67E5222CDF2D /* lidar_scan.cpp */,
 				CEEE86A1DD21070722A2D8F4 /* autoexposure.h */,
 				944960F28EC44112C100173B /* beam_uniformity.h */,
-				4D6B5AE591469C23B9D40C84 /* packet.h */,
 				64A294AFB51A923172E0AA11 /* lidar_scan.h */,
 			);
 			name = ouster;
@@ -679,8 +674,6 @@
 				B1F6FB6F57DA2FBB7101D2A8 /* ofxOusterRenderer.cpp */,
 				E663AD656BB77AE78E31BD3A /* ofxOuster.cpp */,
 				1093CAB842ADC9C1EC351BC7 /* ouster */,
-				9D55E13AA1A95CCE5A4E26B3 /* ofxOusterBatchData.cpp */,
-				DAA936DA179367139B733A93 /* ofxOusterBatchData.hpp */,
 				9473B94A2AB54D9AE4FA0702 /* ofxOusterRenderer.hpp */,
 				C6273B2FB9FE728E7A1DE6CB /* ofxOuster.hpp */,
 			);
@@ -690,10 +683,8 @@
 		F64353197431F960EEA3F81C /* impl */ = {
 			isa = PBXGroup;
 			children = (
-				28CF48F250508299457596F1 /* compat.cpp */,
-				30291FB43C4347278D7E164C /* packet_impl.h */,
-				67488B95B3A6FBF807FA053C /* compat.h */,
-				F70E0B73042ADA14CAC23D2C /* client_impl.h */,
+				6DA6FDF52838ED9581013A51 /* netcompat.h */,
+				7B695F00DA7E0612EFFDEEC8 /* parsing.h */,
 			);
 			name = impl;
 			sourceTree = "<group>";
@@ -800,11 +791,10 @@
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
 				D4738610BDB62319476A987B /* ofxOusterRenderer.cpp in Sources */,
 				41844C0055480033EC690467 /* ofxOuster.cpp in Sources */,
-				29252A055E8729AF9DF06B4F /* compat.cpp in Sources */,
+				D6275EA75C6994F28A99323C /* netcompat.cpp in Sources */,
 				32B14739873D68D2F2FEF2A4 /* types.cpp in Sources */,
 				80097D606AA4DB76AB181C71 /* client.cpp in Sources */,
 				13CF9644D9B97EAD9D976E6E /* lidar_scan.cpp in Sources */,
-				3F34493A3C8C7A90BACC3AAA /* ofxOusterBatchData.cpp in Sources */,
 				E03BE61A20EDC60FA3DF893F /* ofxDropdown.cpp in Sources */,
 				ABE30BE94180E9DE437D88BC /* ofxDropdownOption.cpp in Sources */,
 				856AA354D08AB4B323081444 /* ofxBaseGui.cpp in Sources */,
@@ -852,6 +842,8 @@
 					src/ouster/impl,
 					../../../addons/ofxDropdown/src,
 					../../../addons/ofxGui/src,
+					/usr/local/include/eigen3,
+					/usr/local/include,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
@@ -882,6 +874,7 @@
 					../../../addons/ofxDropdown/src,
 					../../../addons/ofxGui/src,
 					/usr/local/include/eigen3,
+					/usr/local/include,
 				);
 				ICON = "$(ICON_NAME_RELEASE)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
@@ -926,6 +919,8 @@
 					src/ouster/impl,
 					../../../addons/ofxDropdown/src,
 					../../../addons/ofxGui/src,
+					/usr/local/include/eigen3,
+					/usr/local/include,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
@@ -966,6 +961,8 @@
 					src/ouster/impl,
 					../../../addons/ofxDropdown/src,
 					../../../addons/ofxGui/src,
+					/usr/local/include/eigen3,
+					/usr/local/include,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
@@ -996,6 +993,7 @@
 					../../../addons/ofxDropdown/src,
 					../../../addons/ofxGui/src,
 					/usr/local/include/eigen3,
+					/usr/local/include,
 				);
 				ICON = "$(ICON_NAME_DEBUG)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
@@ -1030,6 +1028,7 @@
 					../../../addons/ofxDropdown/src,
 					../../../addons/ofxGui/src,
 					/usr/local/include/eigen3,
+					/usr/local/include,
 				);
 				ICON = "$(ICON_NAME_RELEASE)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";

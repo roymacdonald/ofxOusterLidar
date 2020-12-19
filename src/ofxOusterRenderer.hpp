@@ -182,6 +182,20 @@ class Cloud {
     }
 
     /**
+     * convenience function equivalent to setRange and setKey
+     *
+     * @param cloud_id index of which cloud to update
+     * @param r        range
+     * @param k        key
+     */
+    template <class T, class U>
+    void setRangeAndKey(T* r, U* k) {
+        setRange(r);
+        setKey(k);
+    }
+
+	
+    /**
      * set the XYZ values
      *
      * @param x        pointer to array of exactly 3n where n is number of
@@ -293,7 +307,7 @@ public:
 	enum CloudDisplayMode {
         MODE_RANGE = 0,
         MODE_INTENSITY = 1,
-        MODE_NOISE = 2,
+        MODE_AMBIENT = 2,
         MODE_REFLECTIVITY = 3,
         NUM_MODES = 4
     };
@@ -306,11 +320,10 @@ public:
 	ofParameter<int> display_mode = {"Display Mode", (int)MODE_INTENSITY, 0, (int) NUM_MODES -1};
 	ofParameter<bool> cycle_range = {"Cycle Range", false};
 	ofParameter<bool> show_image = {"Show Image", true};
+	ofParameter<bool> show_ambient = {"Show Ambient", false};
+	ofParameter<bool> cloud_swap = {"Cloud Swap", true};
+//	ofParameter<size_t> which_cloud = {"Which cloud", 0, 0, }
 	
-	
-
-	
-    
 	
     template <class T>
 	void setCloud(T* xyz, T* off, const size_t n, const size_t w,
@@ -319,7 +332,7 @@ public:
 		cloud = make_unique<Cloud>(xyz, off, n, w, extrinsic);
 	}
 	
-	void render(ouster::LidarScan* _readScan);
+	void render(const ouster::LidarScan& _readScan);
 
 	void draw();
 	
@@ -336,31 +349,31 @@ private:
 
 	 ouster::viz::AutoExposure range_ae;
 	 ouster::viz::AutoExposure intensity_ae;
-	 ouster::viz::AutoExposure noise_ae;
+	 ouster::viz::AutoExposure ambient_ae;
 	 ouster::viz::AutoExposure reflectivity_ae;
-	 ouster::viz::BeamUniformityCorrector noise_buc;
+	 ouster::viz::BeamUniformityCorrector ambient_buc;
+	
+	
 	const std::vector<int> px_offset;
 
-	
+	const double aspect_ratio;
+    const size_t h, w;
+    
+    
 	unique_ptr<ofxIntDropdown> displayModeDropdown;
 	
 	std::string name;
-	
-	size_t h;
-	size_t w;
-	
-
+		
 	ofEventListeners listeners;
-	
-	
+		
 	void _cycleRangeChanged(bool&);
 	void _displayModeChanged(int&);
 
-	
 	std::unique_ptr<Cloud> cloud;
 
 	void _setupParameters();
 	
+	
 };
 
-
+//

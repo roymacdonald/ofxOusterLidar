@@ -7,18 +7,14 @@
 #include "ofMain.h"
 
 #include "ouster/client.h"
-#include "ouster/impl/client_impl.h"
-#include "ouster/impl/compat.h"
+#include "ouster/impl/netcompat.h"
 #include "ouster/types.h"
-#include "ouster/packet.h"
 
 #include "ouster/lidar_scan.h"
-#include "ofxOusterBatchData.hpp"
+
 #include "ofxOusterRenderer.hpp"
 
-using namespace ouster;
 
-namespace sensor = ouster::sensor;
 
 class ofxOuster: public ofThread {
 public:
@@ -73,8 +69,8 @@ public:
 			   const std::string& udp_dest_host_,
 			   ouster::sensor::lidar_mode mode_ = ouster::sensor::MODE_UNSPEC,
 			   ouster::sensor::timestamp_mode ts_mode_ = ouster::sensor::TIME_FROM_UNSPEC,
-			   int lidar_port_ = 0,
-			   int imu_port_ = 0,
+			   int lidar_port_ = 7502,
+			   int imu_port_ = 7503,
 			   int timeout_sec_ = 30);
 		
 	
@@ -110,12 +106,13 @@ protected:
 private:
 	std::atomic<bool> _bUseSimpleSetup;
 	std::atomic<bool> _bisSetup;
-	std::atomic<bool> _bClientInited;
+	
 	std::atomic<bool> _bRendererInited;
 	
 	
 	std::atomic<ouster::sensor::lidar_mode> mode;
 	std::atomic<ouster::sensor::timestamp_mode> ts_mode;
+	
 	std::atomic<int> lidar_port;
 	std::atomic<int> imu_port;
 	std::atomic<int> timeout_sec;
@@ -126,55 +123,17 @@ private:
 	
 	std::string udp_dest_host;
 	
-	std::shared_ptr<ouster::sensor::client> cli;
-	
+	std::shared_ptr<ouster::sensor::client> cli = nullptr;
 	
 	ofMutex metadataMutex;
 	string metadata;
 	ouster::sensor::sensor_info sensorInfo;
 	
 	
-	
-	
-	//back buffers are accessed exclusively by the threaded function.
-	//once a back buffer is aquired it is swapped with the front one while locking a mutex.\\
-	//This makes safe to access the front buffer from any other thread
-	
-	std::vector<uint8_t> lidar_buf;
-//	std::vector<uint8_t> lidar_buf_back;
-//	std::vector<uint8_t> imu_buf_front;
-	std::vector<uint8_t> imu_buf;
-	
-    
-
-	ofMutex buf_mutex;
-	
-	
-	
 	void _initValues();
 	
-	std::atomic<uint64_t> n_lidar_packets;
-	std::atomic<uint64_t> n_imu_packets;
-	
-	std::atomic<uint64_t> lidar_col_0_ts;
-	std::atomic<uint64_t> imu_ts;
-	
-	std::atomic<float> lidar_col_0_h_angle;
-	std::atomic<float> imu_av_z;
-	std::atomic<float> imu_la_y;
-	
-	void _handle_lidar(uint8_t* buf, const sensor::packet_format& pf);
-	
-	void _handle_imu(uint8_t* buf, const sensor::packet_format& pf);
-	
-	void _print_headers();
-	
-	void _print_stats();
 
-
-    unique_ptr<ouster::XYZLut> xyz_lut = nullptr;
-	unique_ptr<ofxOusterBatchData> _batchData = nullptr;
-	std::unique_ptr<ouster::LidarScan> _readScan = nullptr;
+  
 
 	
 	
@@ -182,13 +141,14 @@ private:
 	ofEventListener _updateListener;
 	void _update(ofEventArgs&);
 	
-	bool _newData = false;
-
 	
 	unique_ptr<ofxOusterRenderer> _renderer = nullptr;
 	
 	void _initRenderer();
+		
+	ofThreadChannel<ouster::LidarScan> lidarScanChannel;
 	
+	ouster::LidarScan _readScan;
 
 
 	
