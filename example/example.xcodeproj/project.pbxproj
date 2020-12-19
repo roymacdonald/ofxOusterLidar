@@ -143,21 +143,6 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>99D09C2BAF1B537CE0FB2535</key>
-			<dict>
-				<key>children</key>
-				<array>
-					<string>BAD5576C5A8621829E36B731</string>
-					<string>014F100B890E7F2EC758D617</string>
-					<string>00B1726DF3050AD13B18BA3E</string>
-				</array>
-				<key>isa</key>
-				<string>PBXGroup</string>
-				<key>name</key>
-				<string>src</string>
-				<key>sourceTree</key>
-				<string>&lt;group&gt;</string>
-			</dict>
 			<key>D0114C9A7E092D033C9C8E4A</key>
 			<dict>
 				<key>fileRef</key>
@@ -177,6 +162,44 @@
 				<string>lidar_scan.cpp</string>
 				<key>path</key>
 				<string>../../../addons/ofxOusterLidar/libs/ouster/src/lidar_scan.cpp</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>99D09C2BAF1B537CE0FB2535</key>
+			<dict>
+				<key>children</key>
+				<array>
+					<string>F8B05C0C739D1C22669879E3</string>
+					<string>BAD5576C5A8621829E36B731</string>
+					<string>014F100B890E7F2EC758D617</string>
+					<string>00B1726DF3050AD13B18BA3E</string>
+				</array>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>name</key>
+				<string>src</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>B7F8BBD427FF73E5D7D9456A</key>
+			<dict>
+				<key>fileRef</key>
+				<string>F8B05C0C739D1C22669879E3</string>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+			</dict>
+			<key>F8B05C0C739D1C22669879E3</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.cpp.cpp</string>
+				<key>fileEncoding</key>
+				<string>4</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>client.cpp</string>
+				<key>path</key>
+				<string>../../../addons/ofxOusterLidar/libs/ouster/src/client.cpp</string>
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
@@ -334,26 +357,10 @@
 				<key>sourceTree</key>
 				<string>&lt;group&gt;</string>
 			</dict>
-			<key>0AF5EBAB4DA191ED1643C71B</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.c.h</string>
-				<key>fileEncoding</key>
-				<string>4</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>autoexposure.h</string>
-				<key>path</key>
-				<string>../../../addons/ofxOusterLidar/libs/ouster/include/ouster/autoexposure.h</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
 			<key>DB13663A81ADABE30274B6D4</key>
 			<dict>
 				<key>children</key>
 				<array>
-					<string>FBFC5AFB6A8AF804BEC5C324</string>
 					<string>42D981389A88439DA752DFF6</string>
 					<string>99D09C2BAF1B537CE0FB2535</string>
 				</array>
@@ -391,25 +398,18 @@
 				<key>sourceTree</key>
 				<string>&lt;group&gt;</string>
 			</dict>
-			<key>9B35A231C23FF223A71D07C7</key>
-			<dict>
-				<key>fileRef</key>
-				<string>FBFC5AFB6A8AF804BEC5C324</string>
-				<key>isa</key>
-				<string>PBXBuildFile</string>
-			</dict>
-			<key>FBFC5AFB6A8AF804BEC5C324</key>
+			<key>0AF5EBAB4DA191ED1643C71B</key>
 			<dict>
 				<key>explicitFileType</key>
-				<string>sourcecode.cpp.cpp</string>
+				<string>sourcecode.c.h</string>
 				<key>fileEncoding</key>
 				<string>4</string>
 				<key>isa</key>
 				<string>PBXFileReference</string>
 				<key>name</key>
-				<string>client.cpp</string>
+				<string>autoexposure.h</string>
 				<key>path</key>
-				<string>../../../addons/ofxOusterLidar/libs/ouster/client.cpp</string>
+				<string>../../../addons/ofxOusterLidar/libs/ouster/include/ouster/autoexposure.h</string>
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
@@ -4098,7 +4098,7 @@ fi
 					<string>837220E80EB56CD44AD27F2A</string>
 					<string>B56FE57CC35806596D38118C</string>
 					<string>1CD33E884D9E3358252E82A1</string>
-					<string>9B35A231C23FF223A71D07C7</string>
+					<string>B7F8BBD427FF73E5D7D9456A</string>
 					<string>D0114C9A7E092D033C9C8E4A</string>
 					<string>79EB6803011B81AE6F52B680</string>
 					<string>BBFD2BE06489E5842C8AA814</string>
