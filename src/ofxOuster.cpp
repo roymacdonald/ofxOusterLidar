@@ -182,10 +182,7 @@ void ofxOuster::_initRenderer()
 
 void ofxOuster::_update(ofEventArgs&)
 {
-	if(!_renderer)
-	{
-		_initRenderer();
-	}
+	
 	bool bNewData = false;
 		while(lidarScanChannel.tryReceive(_readScan))
 		{

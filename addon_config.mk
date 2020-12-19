@@ -15,11 +15,11 @@
 # and the PG will write to the console the kind of error and in which line it is
 
 meta:
-	ADDON_NAME = ofxEigen
-	
+	ADDON_NAME = ofxOusterLidar
+	ADDON_DESCRIPTION = openFrameworks integration to use ouster lidars
 	ADDON_AUTHOR = @roymacdonald
-	ADDON_TAGS = "addon" "eigen"
-
+	ADDON_TAGS = "addon" "ouster" "lidar"
+	ADDON_URL = http://github.com/roymacdonald/ofxOusterLidar
 common:
 	# dependencies with other addons, a list of them separated by spaces 
 	# or use += in several lines
@@ -29,6 +29,8 @@ common:
 	# but if the addon or addon libraries need special search paths they can be
 	# specified here separated by spaces or one per line using +=
 	ADDON_INCLUDES = /usr/local/include/eigen3
+	ADDON_INCLUDES += libs/ouster/include
+	ADDON_INCLUDES_EXCLUDE = libs/ouster/include/ouster
 	
 	# any special flag that should be passed to the compiler when using this
 	# addon

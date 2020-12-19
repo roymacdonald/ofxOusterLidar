@@ -3,7 +3,7 @@
 
 #include "ofMain.h"
 #include "ofxOuster.hpp"
-
+#include "ofxGui.h"
 
 
 class ofApp : public ofBaseApp{
@@ -30,6 +30,11 @@ class ofApp : public ofBaseApp{
 
     ofEasyCam cam;
 
-
-
+	ofxPanel gui;
+	ofParameter<string> lidarIp = {"Lidar's IP", "192.168.x.x"};
+	ofParameter<string> udpDestIp = {"UDP dest IP", "192.168.x.x"};
+	ofParameter<void> connect = {"Connect"};
+	
+	ofEventListeners listeners;
+	
     };

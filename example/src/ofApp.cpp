@@ -6,13 +6,18 @@ void ofApp::setup(){
     
     ofSetBackgroundAuto(false);
 
+
+	gui.setup();
+	gui.add(lidarIp);
+	gui.add(udpDestIp);
+	gui.add(connect);
+
+	listeners.push(connect.newListener([&](){
+		lidar.setup(lidarIp.get(), udpDestIp.get());
+		lidar.startThread();
+	}));
+
     
-
-
-
-
-    lidar.setup("os-992029000705", "192.168.1.153");
-    lidar.startThread();
 }
 
 //--------------------------------------------------------------
@@ -35,6 +40,10 @@ void ofApp::draw(){
 	lidar.draw();
     cam.end();
 	ofDisableDepthTest();
+	
+	lidar.drawGui();
+	
+	gui.draw();
 	
 }
 

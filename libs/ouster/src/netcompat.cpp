@@ -1,4 +1,4 @@
-#include "ouster/impl/netcompat.h"
+#include "ouster/netcompat.h"
 
 #include <string>
 

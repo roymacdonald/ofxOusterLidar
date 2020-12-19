@@ -14,7 +14,7 @@
 #include <vector>
 
 //#include "ouster/build.h"
-#include "ouster/impl/parsing.h"
+#include "ouster/parsing.h"
 #include "ouster/version.h"
 
 namespace ouster {
@@ -307,7 +307,7 @@ sensor_info parse_metadata(const std::string& meta) {
    
 }
 
-std::string to_string(const sensor_info& info) {
+ofJson metadataToJson(const sensor_info& info){
     ofJson root;
     root["hostname"] = info.name;
     root["prod_sn"] = info.sn;
@@ -329,8 +329,12 @@ std::string to_string(const sensor_info& info) {
 	matrixToJson(info.lidar_to_sensor_transform, root, "lidar_to_sensor_transform");
 	
     root["json_calibration_version"] = FW_2_0;
+	return root;
+}
 
-	return root.dump(4);
+std::string to_string(const sensor_info& info) {
+
+	return metadataToJson(info).dump(4);
 }
 
 extern const std::vector<double> gen1_altitude_angles = {
