@@ -148,6 +148,9 @@ void ofxOuster::threadedFunction(){
 						if (_batchScan(lidar_buf.data(), ls_write)) {
 							lidarScanChannel.send(ls_write);
 						}
+					}else
+					{
+						ofLogWarning("ofxOuster::threadedFunction") << "wrong packet size";
 					}
 				}
 				if (st & sensor::client_state::IMU_DATA) {

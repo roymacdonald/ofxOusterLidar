@@ -3,7 +3,7 @@
 #include <Eigen/Eigen>
 #include <cmath>
 #include <vector>
-
+#include <iostream>
 namespace ouster {
 
 constexpr int LidarScan::N_FIELDS;
@@ -86,8 +86,23 @@ bool ScanBatcher::operator()(const uint8_t* packet_buf, LidarScan& ls) {
         const uint32_t status = pf.col_status(col_buf);
         const bool valid = (status == 0xffffffff);
 
+
+//		std::cout << "col_measurement_id: " << m_id << std::endl;
+//		std::cout << "col_frame_id: " << f_id << std::endl;
+//		std::cout << "col_encoder: " << encoder << std::endl;
+//		std::cout << "col_status: " << status << std::endl;
+//		std::cout << "valid: " << valid << std::endl;
+		
+//		std::cout << "ls_write.frame_id : " << ls_write.frame_id << std::endl;
+
+		
         // drop invalid / out-of-bounds data in case of misconfiguration
-        if (!valid || m_id >= w || f_id + 1 == ls_write.frame_id) continue;
+		if (!valid || m_id >= w || f_id + 1 == ls_write.frame_id) {
+			
+			std::cout << "drop invalid / out-of-bounds data in case of misconfiguration" << std::endl;
+			
+			continue;
+		}
 
         if (ls_write.frame_id != f_id) {
             // if not initializing with first packet

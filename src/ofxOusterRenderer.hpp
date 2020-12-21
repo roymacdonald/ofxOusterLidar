@@ -34,7 +34,8 @@
 
 #include "ofxGui.h"
 #include "ofxDropdown.h"
-
+#include "ofxAutoReloadedShader.h"
+#include <limits>
 // we don't align because the visualizer may be compiled with different
 // compilation options as internal C++ code, leading to problems. besides, the
 // performance here is not super critical
@@ -74,10 +75,14 @@ class Cloud {
     mat4d map_pose;
     std::array<GLfloat, 16> extrinsic_data;  // row major
 
-
-	ofShader pointShader;
 	
+	ofVboMesh planeMesh;
+
+//	ofShader pointShader;
+	ofxAutoReloadedShader pointShader;
    public:
+
+	
     /**
      * Set up the Cloud. Most of these arguments should correspond to CloudSetup
      *
@@ -96,12 +101,28 @@ class Cloud {
           const std::array<double, 16>& extrinsic)
         : n(n),
           w(w),
-	range_data(n),
-	key_data(n),
+		range_data(n),
+		key_data(n),
           transformation(12 * w, 0)
 	{
-
-		pointShader.load("point_program");
+		int h = n/w;
+		std::cout << "h: " << h << std::endl;
+		std::cout << "w: " << w << std::endl;
+//		planeMesh = ofMesh::plane(w, h, w - 1, h -1);
+		planeMesh.setMode(OF_PRIMITIVE_POINTS);
+		
+		float w2 = float(w)/2;
+		for(size_t y = 0; y < h; ++y){
+			for(size_t x = 0; x < w; ++x){
+				planeMesh.addVertex({(float)x - w2, (float)y, 0});
+			}
+		}
+		
+		
+		if(pointShader.load("point_program"))
+		{
+			std::cout << "point shader loaded\n";
+		}
 		
         map_pose.setIdentity();
         std::vector<GLfloat> trans_index_buffer_data(n);
@@ -131,6 +152,9 @@ class Cloud {
 		// now we bind the texture to the shader as a uniform
 		// so we can read the texture buffer from it
 		
+		
+		mesh.setMode(OF_PRIMITIVE_POINTS);
+		
 		pointShader.begin();
 		pointShader.setUniformTexture("transformation",transformationTex,0);
 //		pointShader.end();
@@ -138,6 +162,7 @@ class Cloud {
 //
 //		pointShader.begin();
 		mesh.getVbo().setAttributeData(pointShader.getAttributeLocation("trans_index"),trans_index_buffer_data.data(), 1, n, GL_STATIC_DRAW, sizeof(GLfloat));
+		planeMesh.getVbo().setAttributeData(pointShader.getAttributeLocation("trans_index"),trans_index_buffer_data.data(), 1, n, GL_STATIC_DRAW, sizeof(GLfloat));
 		pointShader.end();
 		
         setXYZ(xyz);
@@ -145,7 +170,9 @@ class Cloud {
         std::copy(extrinsic.begin(), extrinsic.end(), extrinsic_data.begin());
 			  
 			  
-		
+		glm::mat4 mat = glm::make_mat4(&extrinsic_data.data()[0]);
+		pointShader.setUniformMatrix4f("extrinsic", mat);
+//		glUniformMatrix4fv(ids.model_id, 1, GL_FALSE, extrinsic_data.data());
 			  
     }
     /**
@@ -158,9 +185,23 @@ class Cloud {
     void setRange(T* x) {
         std::copy(x, x + n, range_data.begin());
 		
+		std::cout << "Cloud::setRange " << range_data.size() << std::endl;
+		
+		float mx = - std::numeric_limits<float>::max();
+		float mn = -mx;
+		for(auto& r: range_data)
+		{
+			if(r > mx) mx = r;
+			if(r < mn) mn = r;
+		}
+		
+		std::cout << "Range min: " << mn << " max: " << mx << std::endl;
+		
 		pointShader.begin();
 		mesh.getVbo().setAttributeData(pointShader.getAttributeLocation("range"), range_data.data(), 1, n , GL_STATIC_DRAW, sizeof(GLfloat));
 //		mesh.getVbo().setAttributeDivisor(pointShader.getAttributeLocation("range"), 1);
+		
+		planeMesh.getVbo().setAttributeData(pointShader.getAttributeLocation("range"), range_data.data(), 1, n , GL_STATIC_DRAW, sizeof(GLfloat));
 		pointShader.end();
 		
 		
@@ -176,8 +217,10 @@ class Cloud {
     template <class T>
     void setKey(T* x) {
         std::copy(x, x + n, key_data.begin());
+		std::cout << "Cloud::setKey " << key_data.size() << std::endl;
 		pointShader.begin();
 		mesh.getVbo().setAttributeData(pointShader.getAttributeLocation("key"), key_data.data(), 1, n , GL_STATIC_DRAW, sizeof(GLfloat));
+		planeMesh.getVbo().setAttributeData(pointShader.getAttributeLocation("key"), key_data.data(), 1, n , GL_STATIC_DRAW, sizeof(GLfloat));
 		pointShader.end();
     }
 
@@ -206,15 +249,21 @@ class Cloud {
     void setXYZ(T* xyz) {
 		
 		
-		std::vector<GLfloat> xyz_data (3 * n);
+		std::vector<glm::vec3> xyz_data (n);
 		// I am not sure if all this is necesary
+		std::cout << "setXYZ: " << n << std::endl;
         for (size_t i = 0; i < n; i++) {
-            for (size_t k = 0; k < 3; k++) {
-                xyz_data[3 * i + k] = static_cast<GLfloat>(xyz[i + n * k]);
-            }
+            
+				xyz_data[i].x = static_cast<float>(xyz[i + n * 0]);
+				xyz_data[i].y = static_cast<float>(xyz[i + n * 1]);
+				xyz_data[i].z = static_cast<float>(xyz[i + n * 2]);
         }
 		
-		mesh.getVbo().setVertexData(xyz_data.data(), 3, n, GL_STATIC_DRAW);
+		
+		mesh.addVertices(xyz_data);
+		
+		planeMesh.getVbo().setAttributeData(pointShader.getAttributeLocation("xyz"), &xyz_data[0].x, 3, n , GL_STATIC_DRAW, sizeof(glm::vec3));
+//		mesh.getVbo().setVertexData(xyz_data.data(), 3, n, GL_STATIC_DRAW);
 //		xyz_changed = true;
     }
 
@@ -237,6 +286,7 @@ class Cloud {
 		
 		pointShader.begin();
 		mesh.getVbo().setAttributeData(pointShader.getAttributeLocation("offset"), off_data.data(), 3, n , GL_STATIC_DRAW, sizeof(GLfloat)*3);
+		planeMesh.getVbo().setAttributeData(pointShader.getAttributeLocation("offset"), off_data.data(), 3, n , GL_STATIC_DRAW, sizeof(GLfloat)*3);
 		pointShader.end();
 		
     }
@@ -269,19 +319,21 @@ class Cloud {
                     static_cast<GLfloat>(translation[v + rgb * w]);
             }
         }
-		
+		transformationBuffer.updateData(0,transformation);
     }
 
 
 	/**
 	 * render the point cloud with the point of view of the Camera
 	 */
-	void draw() {
+	void draw(float range_scale) {
 	
 		pointShader.begin();
+		pointShader.setUniform1f("range_scale",range_scale);
 		
+		ofSetColor(255);
 		mesh.draw();
-		
+//		planeMesh.draw();
 		pointShader.end();
 	}
 	
@@ -316,6 +368,7 @@ public:
 	
 	
 	ofParameter<float> point_size = {"Point Size", 3, 1, 10};
+	ofParameter<float> range_scale = {"range_scale", 1, 0, 1};
 	ofParameter<bool> show_noise = {"Show Noise", true};
 	ofParameter<int> display_mode = {"Display Mode", (int)MODE_INTENSITY, 0, (int) NUM_MODES -1};
 	ofParameter<bool> cycle_range = {"Cycle Range", false};
@@ -372,7 +425,7 @@ private:
 	std::unique_ptr<Cloud> cloud;
 
 	void _setupParameters();
-	
+	ofEasyCam cam;
 	
 };
 

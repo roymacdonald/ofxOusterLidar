@@ -20,31 +20,48 @@ w(info.format.columns_per_frame)
 {
 	
 	
-	image.allocate(  w, h , OF_IMAGE_COLOR);
+	std::cout << "info.format.pixels_per_column: " << h << std::endl;
+	std::cout << "info.format.columns_per_frame: " << w << std::endl;
+	
+	image.allocate(  w, h *3 , OF_IMAGE_GRAYSCALE);
 	
 	_setupParameters();
 }
 
+
+void printRowsCols(ouster::img_t<double> & i, const std::string & name){
+	std::cout << name << " : rows: " << i.rows() << "  cols: " << i.cols() << std::endl;
+}
 
 void ofxOusterRenderer::render(const ouster::LidarScan& _readScan)
 {
 	
 	if(cloud)
 	{
+		
+		std::cout << "render\n";
+		
 		using glmap_t = Eigen::Map<Eigen::Array<GLfloat, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
 
 		ouster::img_t<double> range = _readScan.field(ouster::LidarScan::RANGE).cast<double>();
-        if (show_image || display_mode == MODE_RANGE) {
-            if (!cycle_range) {
+//        if (show_image || display_mode == MODE_RANGE) {
+//            if (!cycle_range) {
                 range_ae( Eigen::Map<Eigen::ArrayXd>(range.data(), range.size()));
-            }
-        }
+//            }
+//        }
 		ouster::img_t<double> intensity = _readScan.field(ouster::LidarScan::INTENSITY).cast<double>();
-        if (show_image || display_mode == MODE_INTENSITY) {
+		
+//        if (show_image || display_mode == MODE_INTENSITY) {
             intensity_ae( Eigen::Map<Eigen::ArrayXd>(intensity.data(), intensity.size()));
-        }
+//        }
         ouster::img_t<double> ambient = _readScan.field(ouster::LidarScan::AMBIENT).cast<double>();
-        auto intensity_destaggered = ouster::destagger<double>(intensity, px_offset);
+        
+	
+		printRowsCols(range, "range");
+		printRowsCols(intensity, "intensity");
+		printRowsCols(ambient, "ambient");
+		
+		auto intensity_destaggered = ouster::destagger<double>(intensity, px_offset);
         auto range_destaggered = ouster::destagger<double>(range, px_offset);
 		
 		
@@ -59,11 +76,11 @@ void ofxOusterRenderer::render(const ouster::LidarScan& _readScan)
         } else {
             glmap_t(imdata.getData(), h, w) = range_destaggered.cast<GLfloat>();
         }
-        glmap_t(imdata.getData() + w * h, h, w) =
-            intensity_destaggered.cast<GLfloat>();
+		
+        glmap_t(imdata.getData() + w * h, h, w) = intensity_destaggered.cast<GLfloat>();
 
         ouster::img_t<double> ambient_destaggered{h, w};
-        if ((show_image && show_ambient) || display_mode == MODE_AMBIENT) {
+//        if ((show_image && show_ambient) || display_mode == MODE_AMBIENT) {
             // we need to destagger ambient because the
             // BeamUniformityCorrector only works on destaggered stuff
             ambient_destaggered = ouster::destagger<double>(ambient, px_offset);
@@ -71,12 +88,12 @@ void ofxOusterRenderer::render(const ouster::LidarScan& _readScan)
             ambient_ae(Eigen::Map<Eigen::ArrayXd>(ambient_destaggered.data(),
                                                   ambient_destaggered.size()));
 
-            if (show_image && show_ambient) {
+//            if (show_image && show_ambient) {
                 glmap_t(imdata.getData() + 2 * w * h, h, w) = ambient_destaggered.cast<GLfloat>();
-            }
-        }
+//            }
+//        }
 
-        if (show_image) {
+//        if (show_image) {
 //            if (show_ambient) {
 //				image.resize(w, h);
 ////                point_viz.resizeImage(w, 3 * h);
@@ -84,9 +101,11 @@ void ofxOusterRenderer::render(const ouster::LidarScan& _readScan)
 ////                point_viz.resizeImage(w, 2 * h);
 //            }
 			image.update();
-        }
+//        }
 
         auto range_data = _readScan.field(ouster::LidarScan::RANGE).data();
+		std::cout << "range data size: " << _readScan.field(ouster::LidarScan::RANGE).size() << std::endl;
+		
 
         switch (+display_mode) {
             case MODE_INTENSITY:
@@ -160,7 +179,21 @@ size_t ofxOusterRenderer::getWidth() const
 
 void ofxOusterRenderer::draw()
 {
-	if(cloud) cloud->draw();
+	cam.begin();
+	if(cloud){
+		 cloud->draw(range_scale.get());
+	}else
+	{
+		ofLogError("ofxOusterRenderer::draw" ) << "Cloud not inited";
+	}
+	cam.end();
+	if (show_image)
+	{
+		ofRectangle r (0,0, image.getWidth(), image.getHeight());
+		ofRectangle s (0,0, ofGetWidth(), ofGetHeight());
+		r.scaleTo(s, OF_ASPECT_RATIO_KEEP, OF_ALIGN_HORZ_CENTER, OF_ALIGN_VERT_BOTTOM, OF_ALIGN_HORZ_CENTER, OF_ALIGN_VERT_BOTTOM);
+		image.draw(r);
+	}
 }
 
 void ofxOusterRenderer::drawGui()
@@ -175,6 +208,7 @@ void ofxOusterRenderer::_setupParameters()
 	gui.setup(name + " params");
 	
 	gui.add(point_size);
+	gui.add(range_scale);
 	gui.add(show_noise);
 
 	
@@ -199,7 +233,9 @@ void ofxOusterRenderer::_setupParameters()
 	
 	listeners.push(display_mode.newListener(this, &ofxOusterRenderer::_displayModeChanged));
 	listeners.push(cycle_range.newListener(this, &ofxOusterRenderer::_cycleRangeChanged));
-	
-	
+	listeners.push(point_size.newListener([&](float&){
+		glPointSize(point_size.get());
+	}));
+		
 	
 }
