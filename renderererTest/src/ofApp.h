@@ -32,10 +32,5 @@ class ofApp : public ofBaseApp{
 	
 	ouster::sensor::sensor_info info;
 	
-	ofMesh mesh;
-
-	ofxAutoReloadedShader pointShader;
-	
-	ofEasyCam cam;
 	
     };

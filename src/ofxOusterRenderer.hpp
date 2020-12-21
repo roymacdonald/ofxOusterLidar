@@ -76,7 +76,7 @@ class Cloud {
     std::array<GLfloat, 16> extrinsic_data;  // row major
 
 	
-	ofVboMesh planeMesh;
+	
 
 //	ofShader pointShader;
 	ofxAutoReloadedShader pointShader;
@@ -105,23 +105,10 @@ class Cloud {
 		key_data(n),
           transformation(12 * w, 0)
 	{
-		int h = n/w;
-		std::cout << "h: " << h << std::endl;
-		std::cout << "w: " << w << std::endl;
-//		planeMesh = ofMesh::plane(w, h, w - 1, h -1);
-		planeMesh.setMode(OF_PRIMITIVE_POINTS);
-		
-		float w2 = float(w)/2;
-		for(size_t y = 0; y < h; ++y){
-			for(size_t x = 0; x < w; ++x){
-				planeMesh.addVertex({(float)x - w2, (float)y, 0});
-			}
-		}
-		
-		
-		if(pointShader.load("point_program"))
+				
+		if(!pointShader.load("point_program"))
 		{
-			std::cout << "point shader loaded\n";
+			std::cout << "point shader NOT loaded\n";
 		}
 		
         map_pose.setIdentity();
@@ -162,7 +149,6 @@ class Cloud {
 //
 //		pointShader.begin();
 		mesh.getVbo().setAttributeData(pointShader.getAttributeLocation("trans_index"),trans_index_buffer_data.data(), 1, n, GL_STATIC_DRAW, sizeof(GLfloat));
-		planeMesh.getVbo().setAttributeData(pointShader.getAttributeLocation("trans_index"),trans_index_buffer_data.data(), 1, n, GL_STATIC_DRAW, sizeof(GLfloat));
 		pointShader.end();
 		
         setXYZ(xyz);
@@ -199,9 +185,7 @@ class Cloud {
 		
 		pointShader.begin();
 		mesh.getVbo().setAttributeData(pointShader.getAttributeLocation("range"), range_data.data(), 1, n , GL_STATIC_DRAW, sizeof(GLfloat));
-//		mesh.getVbo().setAttributeDivisor(pointShader.getAttributeLocation("range"), 1);
-		
-		planeMesh.getVbo().setAttributeData(pointShader.getAttributeLocation("range"), range_data.data(), 1, n , GL_STATIC_DRAW, sizeof(GLfloat));
+
 		pointShader.end();
 		
 		
@@ -220,7 +204,7 @@ class Cloud {
 		std::cout << "Cloud::setKey " << key_data.size() << std::endl;
 		pointShader.begin();
 		mesh.getVbo().setAttributeData(pointShader.getAttributeLocation("key"), key_data.data(), 1, n , GL_STATIC_DRAW, sizeof(GLfloat));
-		planeMesh.getVbo().setAttributeData(pointShader.getAttributeLocation("key"), key_data.data(), 1, n , GL_STATIC_DRAW, sizeof(GLfloat));
+		
 		pointShader.end();
     }
 
@@ -259,12 +243,7 @@ class Cloud {
 				xyz_data[i].z = static_cast<float>(xyz[i + n * 2]);
         }
 		
-		
 		mesh.addVertices(xyz_data);
-		
-		planeMesh.getVbo().setAttributeData(pointShader.getAttributeLocation("xyz"), &xyz_data[0].x, 3, n , GL_STATIC_DRAW, sizeof(glm::vec3));
-//		mesh.getVbo().setVertexData(xyz_data.data(), 3, n, GL_STATIC_DRAW);
-//		xyz_changed = true;
     }
 
     /**
@@ -286,7 +265,6 @@ class Cloud {
 		
 		pointShader.begin();
 		mesh.getVbo().setAttributeData(pointShader.getAttributeLocation("offset"), off_data.data(), 3, n , GL_STATIC_DRAW, sizeof(GLfloat)*3);
-		planeMesh.getVbo().setAttributeData(pointShader.getAttributeLocation("offset"), off_data.data(), 3, n , GL_STATIC_DRAW, sizeof(GLfloat)*3);
 		pointShader.end();
 		
     }
@@ -333,7 +311,6 @@ class Cloud {
 		
 		ofSetColor(255);
 		mesh.draw();
-//		planeMesh.draw();
 		pointShader.end();
 	}
 	
@@ -375,12 +352,11 @@ public:
 	ofParameter<bool> show_image = {"Show Image", true};
 	ofParameter<bool> show_ambient = {"Show Ambient", false};
 	ofParameter<bool> cloud_swap = {"Cloud Swap", true};
-//	ofParameter<size_t> which_cloud = {"Which cloud", 0, 0, }
+
 	
 	
     template <class T>
-	void setCloud(T* xyz, T* off, const size_t n, const size_t w,
-	const std::array<double, 16>& extrinsic)
+	void setCloud(T* xyz, T* off, const size_t n, const size_t w, const std::array<double, 16>& extrinsic)
 	{
 		cloud = make_unique<Cloud>(xyz, off, n, w, extrinsic);
 	}

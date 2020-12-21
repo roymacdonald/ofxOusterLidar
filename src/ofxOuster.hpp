@@ -148,6 +148,7 @@ private:
 		
 	ofThreadChannel<ouster::LidarScan> lidarScanChannel;
 	
+	
 	ouster::LidarScan _readScan;
 
 
