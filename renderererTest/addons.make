@@ -1,5 +1,3 @@
-ofxAutoReloadedShader
 ofxDropdown
 ofxGui
 ofxOusterLidar
-ofxPoco
