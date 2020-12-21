@@ -104,6 +104,10 @@ protected:
 	
 	virtual void threadedFunction() override;
 private:
+	
+	bool _initClient();
+	std::atomic<bool> _clientInited;
+	
 	std::atomic<bool> _bUseSimpleSetup;
 	std::atomic<bool> _bisSetup;
 	

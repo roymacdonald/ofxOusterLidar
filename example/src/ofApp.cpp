@@ -6,12 +6,15 @@ void ofApp::setup(){
     
     ofSetBackgroundAuto(false);
 
-
-	gui.setup();
+	string settings = "network_settings.json";
+	gui.setup("ofxOuster", settings);
 	gui.add(lidarIp);
 	gui.add(udpDestIp);
 	gui.add(connect);
 
+	gui.loadFromFile(settings);
+	
+	
 	listeners.push(connect.newListener([&](){
 		lidar.setup(lidarIp.get(), udpDestIp.get());
 		lidar.startThread();
@@ -34,13 +37,9 @@ void ofApp::exit(){
 //--------------------------------------------------------------
 void ofApp::draw(){
   ofBackground(0,0,0);
-
-	ofEnableDepthTest();
-	cam.begin();
-	lidar.draw();
-    cam.end();
-	ofDisableDepthTest();
 	
+	lidar.draw();
+    
 	lidar.drawGui();
 	
 	gui.draw();

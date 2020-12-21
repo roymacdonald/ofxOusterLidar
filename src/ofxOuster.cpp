@@ -67,87 +67,112 @@ void ofxOuster::setup(const std::string& hostname_,
 	_updateListener = ofEvents().update.newListener(this, &ofxOuster::_update);
 }
 
+bool ofxOuster::_initClient()
+{
+	if(_bisSetup && !cli && !_clientInited)
+	{
+		
+		string _hostname;
+		string _udp_dest_host;
+		{
+			std::lock_guard<ofMutex> lock(hostMutex);
+			_hostname = hostname;
+			_udp_dest_host = udp_dest_host;
+		}
+		if(_bUseSimpleSetup)
+		{
+			cli = sensor::init_client(_hostname, lidar_port, imu_port);
+		}
+		else
+		{
+			cli = sensor::init_client(_hostname, _udp_dest_host, mode, ts_mode, lidar_port, imu_port, timeout_sec);
+		}
+		if (!cli) {
+			ofLogError("ofxOuster") << "Failed to connect to client at: " << _hostname << std::endl;
+			return false;
+		}
+		
+		
+		auto _metadata = sensor::get_metadata(*cli);
+		auto _sensorInfo = sensor::parse_metadata(_metadata);
+		
+		
+		ofLogVerbose("ofxOuster") << "Using lidar_mode: " << sensor::to_string(_sensorInfo.mode);
+		ofLogVerbose("ofxOuster") << _sensorInfo.prod_line << " sn: " << _sensorInfo.sn << " firmware rev: " << _sensorInfo.fw_rev ;
+		
+		
+		{
+			/// unnamed scope for locking mutex and automatically unlocking upon scope end
+			std::lock_guard<ofMutex> lock(metadataMutex);
+			metadata = _metadata;
+			sensorInfo = _sensorInfo;
+			
+		}
+		_clientInited = true;
+		return true;
+	}
+}
+
 void ofxOuster::threadedFunction(){
 	if(ofThread::isThreadRunning())
 	{
-		if(_bisSetup && !cli)
+		if(_bisSetup )
 		{
-			{
-				string _hostname;
-				string _udp_dest_host;
+			if(!_clientInited){
+				if(_initClient() == false)
 				{
-					std::lock_guard<ofMutex> lock(hostMutex);
-					_hostname = hostname;
-					_udp_dest_host = udp_dest_host;
-				}
-				if(_bUseSimpleSetup)
-				{
-					cli = sensor::init_client(_hostname, lidar_port, imu_port);
-				}
-				else
-				{
-					cli = sensor::init_client(_hostname, _udp_dest_host, mode, ts_mode, lidar_port, imu_port, timeout_sec);
-				}
-				if (!cli) {
-					ofLogError("ofxOuster") << "Failed to connect to client at: " << _hostname << std::endl;
-					return ;
-				}
-			}
-			
-			auto _metadata = sensor::get_metadata(*cli);
-			auto _sensorInfo = sensor::parse_metadata(_metadata);
-			auto packetFormat = sensor::get_format(_sensorInfo);
-			
-			ofLogVerbose("ofxOuster") << "Using lidar_mode: " << sensor::to_string(_sensorInfo.mode);
-			ofLogVerbose("ofxOuster") << _sensorInfo.prod_line << " sn: " << _sensorInfo.sn << " firmware rev: " << _sensorInfo.fw_rev ;
-			
-			uint32_t H ;
-			uint32_t W ;
-			{
-				/// unnamed scope for locking mutex and automatically unlocking upon scope end
-				std::lock_guard<ofMutex> lock(metadataMutex);
-				metadata = _metadata;
-				sensorInfo = _sensorInfo;
-				H = sensorInfo.format.pixels_per_column;
-				W = sensorInfo.format.columns_per_frame;
-			}
-			
-			_initRenderer();
-			
-			std::vector<uint8_t> lidar_buf(packetFormat.lidar_packet_size + 1);
-			std::vector<uint8_t> imu_buf(packetFormat.imu_packet_size + 1);
-			
-			
-			ouster::LidarScan ls_write (W, H);
-			
-			auto _batchScan = ouster::ScanBatcher(W, packetFormat);
-			
-			while (isThreadRunning()) {
-				
-				sensor::client_state st = sensor::poll_client(*cli);
-				if (st & sensor::client_state::CLIENT_ERROR) {
-					ofLogError("ofxOuster::threadedFunction")<< "Client error. Closing thread";
+					ofLogError("ofxOuster::threadedFunction")<< "Client init failed. Stopping thread";
 					stopThread();
-					break;
+				}
+			}
+			if(_clientInited){
+				ouster::sensor::sensor_info _sensorInfo;
+				{
+					std::lock_guard<ofMutex> lock(metadataMutex);
+					_sensorInfo  = sensorInfo;
 				}
 				
-				if (st & sensor::client_state::LIDAR_DATA) {
-					if (sensor::read_lidar_packet(*cli, lidar_buf.data(),
-												  packetFormat)) {
-						if (_batchScan(lidar_buf.data(), ls_write)) {
-							lidarScanChannel.send(ls_write);
-						}
-					}else
-					{
-						ofLogWarning("ofxOuster::threadedFunction") << "wrong packet size";
+				uint32_t H = _sensorInfo.format.pixels_per_column;
+				uint32_t W = _sensorInfo.format.columns_per_frame;
+				auto packetFormat = sensor::get_format(_sensorInfo);
+				
+				
+				std::vector<uint8_t> lidar_buf(packetFormat.lidar_packet_size + 1);
+				std::vector<uint8_t> imu_buf(packetFormat.imu_packet_size + 1);
+				
+				
+				ouster::LidarScan ls_write (W, H);
+				
+				auto _batchScan = ouster::ScanBatcher(W, packetFormat);
+				
+				while (isThreadRunning()) {
+					
+					sensor::client_state st = sensor::poll_client(*cli);
+					if (st & sensor::client_state::CLIENT_ERROR) {
+						ofLogError("ofxOuster::threadedFunction")<< "Client error. Closing thread";
+						stopThread();
+						break;
 					}
-				}
-				if (st & sensor::client_state::IMU_DATA) {
-					sensor::read_imu_packet(*cli, imu_buf.data(), packetFormat);
-				}
-				if (st & sensor::EXIT) {
-					stopThread();
-					break;
+					
+					if (st & sensor::client_state::LIDAR_DATA) {
+						if (sensor::read_lidar_packet(*cli, lidar_buf.data(),
+													  packetFormat)) {
+							if (_batchScan(lidar_buf.data(), ls_write)) {
+								lidarScanChannel.send(ls_write);
+							}
+						}else
+						{
+							ofLogWarning("ofxOuster::threadedFunction") << "wrong packet size";
+						}
+					}
+					if (st & sensor::client_state::IMU_DATA) {
+						sensor::read_imu_packet(*cli, imu_buf.data(), packetFormat);
+					}
+					if (st & sensor::EXIT) {
+						stopThread();
+						break;
+						
+					}
 				}
 			}
 		}
@@ -174,29 +199,33 @@ void ofxOuster::_initRenderer()
 
 void ofxOuster::_update(ofEventArgs&)
 {
-	
-	bool bNewData = false;
-	while(lidarScanChannel.tryReceive(_readScan))
-	{
-		bNewData = true;
-		// The lidarScanChannel is an ofThreadChannel which behaves as a safe queue between threads.
-		// We call tryReceive inside a while loop in order to empty the queue and get the newest data, in case that one thread is running significantly slower that the other.
-	}
-	if(bNewData && _renderer)
-	{
-		_renderer->render(_readScan);
+	if(_clientInited){
+		if(_bisSetup && !_renderer){
+			_initRenderer();
+		}
+		bool bNewData = false;
+		while(lidarScanChannel.tryReceive(_readScan))
+		{
+			bNewData = true;
+			// The lidarScanChannel is an ofThreadChannel which behaves as a safe queue between threads.
+			// We call tryReceive inside a while loop in order to empty the queue and get the newest data, in case that one thread is running significantly slower that the other.
+		}
+		if(bNewData && _renderer)
+		{
+			_renderer->render(_readScan);
+		}
 	}
 }
 
 
 void ofxOuster::draw()
 {
-	
 	if(_renderer)
 	{
+		ofEnableDepthTest();
 		_renderer->draw();
+		ofDisableDepthTest();
 	}
-	
 }
 
 
@@ -261,6 +290,8 @@ void ofxOuster::_initValues()
 	imu_port = 0;
 	timeout_sec = 30;
 	_bisSetup = false;
+	
+	_clientInited = false;
 	
 }
 
