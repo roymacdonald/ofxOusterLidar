@@ -1,9 +1,3 @@
-//
-//  ofxOuster.hpp
-//  ofxOuster_example2
-//
-//  Created by Roy Macdonald on 9/19/20.
-//
 #include "ofMain.h"
 
 #include "ouster/client.h"
@@ -97,15 +91,16 @@ public:
 	int getTimeout();
 
 
-	void draw();
+	void draw(float x, float y, float z, float rx, float ry, float rz);
 	void drawGui();
-	
+    bool _initClient();
+	unique_ptr<ofxOusterRenderer> _renderer = nullptr;
 protected:
 	
 	virtual void threadedFunction() override;
 private:
 	
-	bool _initClient();
+	
 	std::atomic<bool> _clientInited;
 	
 	std::atomic<bool> _bUseSimpleSetup;
@@ -146,7 +141,7 @@ private:
 	void _update(ofEventArgs&);
 	
 	
-	unique_ptr<ofxOusterRenderer> _renderer = nullptr;
+
 	
 	void _initRenderer();
 		
