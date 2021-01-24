@@ -1,10 +1,3 @@
-//
-//  ofxOusterRenderer.hpp
-//  lidarSketch
-//
-//  Created by Roy Macdonald on 10/12/20.
-//
-
 #pragma once
 
 
@@ -33,7 +26,7 @@
 #include "ofMain.h"
 
 #include "ofxGui.h"
-#include "ofxDropdown.h"
+//#include "ofxDropdown.h"
 //#include "ofxAutoReloadedShader.h"
 #include <limits>
 // we don't align because the visualizer may be compiled with different
@@ -60,29 +53,29 @@ using mat4d = Eigen::Matrix<double, 4, 4, Eigen::DontAlign>;
 class Cloud {
     const size_t n;
     const size_t w;
-	
-	ofVboMesh mesh;
-	
+
+
 	std::vector<GLfloat> range_data;
     std::vector<GLfloat> key_data;
-    
 
-	
-	
-	ofTexture transformationTex;
-	ofBufferObject transformationBuffer;
-    std::vector<GLfloat> transformation;  // set automatically by setColumnPoses
-    mat4d map_pose;
+
+
+
     std::array<GLfloat, 16> extrinsic_data;  // row major
 
-	
-	
+
+
 
 	ofShader pointShader;
 //	ofxAutoReloadedShader pointShader;
    public:
+       ofVboMesh mesh;
+       ofTexture transformationTex;
+       ofBufferObject transformationBuffer;
+       std::vector<GLfloat> transformation;  // set automatically by setColumnPoses
+       mat4d map_pose;
 
-	
+
     /**
      * Set up the Cloud. Most of these arguments should correspond to CloudSetup
      *
@@ -105,15 +98,15 @@ class Cloud {
 		key_data(n),
           transformation(12 * w, 0)
 	{
-				
+
 		if(!pointShader.load("point_program"))
 		{
 			std::cout << "point shader NOT loaded\n";
 		}
-		
+
         map_pose.setIdentity();
         std::vector<GLfloat> trans_index_buffer_data(n);
-			  
+
         for (size_t i = 0; i < n; i++) {
             trans_index_buffer_data[i] = ((i % w) + 0.5) / (GLfloat)w;
         }
@@ -124,8 +117,8 @@ class Cloud {
             transformation[3 * (v + 2 * w) + 2] = 1;
         }
 
-		
-		
+
+
 		transformationBuffer.allocate();
 		transformationBuffer.bind(GL_TEXTURE_BUFFER);
 		transformationBuffer.setData(transformation,GL_STREAM_DRAW);
@@ -138,28 +131,30 @@ class Cloud {
 
 		// now we bind the texture to the shader as a uniform
 		// so we can read the texture buffer from it
-		
-		
+
+
 		mesh.setMode(OF_PRIMITIVE_POINTS);
-		
+
 		pointShader.begin();
 		pointShader.setUniformTexture("transformation",transformationTex,0);
 //		pointShader.end();
 //
 //
 //		pointShader.begin();
+        mesh.enableColors();
 		mesh.getVbo().setAttributeData(pointShader.getAttributeLocation("trans_index"),trans_index_buffer_data.data(), 1, n, GL_STATIC_DRAW, sizeof(GLfloat));
+        mesh.getVbo().setColorData(viridis.data(), viridis_n, GL_STATIC_DRAW);
 		pointShader.end();
-		
+
         setXYZ(xyz);
         setOffset(off);
         std::copy(extrinsic.begin(), extrinsic.end(), extrinsic_data.begin());
-			  
-			  
+
+
 		glm::mat4 mat = glm::make_mat4(&extrinsic_data.data()[0]);
 		pointShader.setUniformMatrix4f("extrinsic", mat);
 //		glUniformMatrix4fv(ids.model_id, 1, GL_FALSE, extrinsic_data.data());
-			  
+
     }
     /**
      * set the range values
@@ -170,9 +165,9 @@ class Cloud {
     template <class T>
     void setRange(T* x) {
         std::copy(x, x + n, range_data.begin());
-		
+
 		std::cout << "Cloud::setRange " << range_data.size() << std::endl;
-		
+
 		float mx = - std::numeric_limits<float>::max();
 		float mn = -mx;
 		for(auto& r: range_data)
@@ -180,16 +175,16 @@ class Cloud {
 			if(r > mx) mx = r;
 			if(r < mn) mn = r;
 		}
-		
+
 		std::cout << "Range min: " << mn << " max: " << mx << std::endl;
-		
+
 		pointShader.begin();
 		mesh.getVbo().setAttributeData(pointShader.getAttributeLocation("range"), range_data.data(), 1, n , GL_STATIC_DRAW, sizeof(GLfloat));
 
 		pointShader.end();
-		
-		
-		
+
+
+
     }
 
     /**
@@ -204,7 +199,7 @@ class Cloud {
 		std::cout << "Cloud::setKey " << key_data.size() << std::endl;
 		pointShader.begin();
 		mesh.getVbo().setAttributeData(pointShader.getAttributeLocation("key"), key_data.data(), 1, n , GL_STATIC_DRAW, sizeof(GLfloat));
-		
+
 		pointShader.end();
     }
 
@@ -221,7 +216,7 @@ class Cloud {
         setKey(k);
     }
 
-	
+
     /**
      * set the XYZ values
      *
@@ -231,18 +226,18 @@ class Cloud {
      */
     template <class T>
     void setXYZ(T* xyz) {
-		
-		
+
+
 		std::vector<glm::vec3> xyz_data (n);
 		// I am not sure if all this is necesary
 		std::cout << "setXYZ: " << n << std::endl;
         for (size_t i = 0; i < n; i++) {
-            
+
 				xyz_data[i].x = static_cast<float>(xyz[i + n * 0]);
 				xyz_data[i].y = static_cast<float>(xyz[i + n * 1]);
 				xyz_data[i].z = static_cast<float>(xyz[i + n * 2]);
         }
-		
+
 		mesh.addVertices(xyz_data);
     }
 
@@ -256,17 +251,17 @@ class Cloud {
     template <class T>
     void setOffset(T* off) {
 		std::vector<GLfloat> off_data(3 * n);
-		
+
         for (size_t i = 0; i < n; i++) {
             for (size_t k = 0; k < 3; k++) {
                 off_data[3 * i + k] = static_cast<GLfloat>(off[i + n * k]);
             }
         }
-		
+
 		pointShader.begin();
 		mesh.getVbo().setAttributeData(pointShader.getAttributeLocation("offset"), off_data.data(), 3, n , GL_STATIC_DRAW, sizeof(GLfloat)*3);
 		pointShader.end();
-		
+
     }
 
     /**
@@ -305,34 +300,36 @@ class Cloud {
 	 * render the point cloud with the point of view of the Camera
 	 */
 	void draw(float range_scale) {
-	
+
 		pointShader.begin();
 		pointShader.setUniform1f("range_scale",range_scale);
-		
-		ofSetColor(255);
+
+		//ofSetColor(255);
 		mesh.draw();
 		pointShader.end();
 	}
-	
-    
+
+
 };
 
 
 class ofxOusterRenderer {
 public:
-	
+
 	ofxOusterRenderer(const ouster::sensor::sensor_info & info, const std::string& name_);
-    
+
 
 	ofTexture palette_texture;
 
-	
+
+
+    ofTexture imgTex, lastImgTex;
 
 	ofFloatImage image;
 	ofFloatImage noiseImage;
-	
-	
-	
+
+
+
 	enum CloudDisplayMode {
         MODE_RANGE = 0,
         MODE_INTENSITY = 1,
@@ -340,69 +337,80 @@ public:
         MODE_REFLECTIVITY = 3,
         NUM_MODES = 4
     };
-	
-	ofxPanel gui;
-	
-	
-	ofParameter<float> point_size = {"Point Size", 3, 1, 10};
-	ofParameter<float> range_scale = {"range_scale", 1, 0, 1};
-	ofParameter<bool> show_noise = {"Show Noise", true};
-	ofParameter<int> display_mode = {"Display Mode", (int)MODE_INTENSITY, 0, (int) NUM_MODES -1};
-	ofParameter<bool> cycle_range = {"Cycle Range", false};
-	ofParameter<bool> show_image = {"Show Image", true};
-	ofParameter<bool> show_ambient = {"Show Ambient", false};
-	ofParameter<bool> cloud_swap = {"Cloud Swap", true};
 
-	
-	
+	ofxPanel gui;
+
+    ofParameter<bool> colorize = { "Colorize", false };
+    ofParameter<float> cloud1rotX = { "Cloud 1 X Angle", 0.0, 0.0, 360.0 };
+    ofParameter<float> cloud1rotY = { "Cloud 1 Y Angle", 180.0, 0.0, 360.0 };
+    ofParameter<float> cloud1rotZ = { "Cloud 1 Z Angle", 0.0, 0.0, 360.0 };
+    ofParameter<float> cloud1X = { "Cloud 1 X ", 0.5, 0.0, 1.0 };
+    ofParameter<float> cloud1Y = { "Cloud 1 Y", 0.5, 0.0, 1.0 };
+    ofParameter<float> cloud1Z = { "Cloud 1 Z", 0.5, 0.0, 1.0 };
+    ofParameter<float> cameraDistance = { "Camera Distance", 50.0, 0.0, 200.0 };
+
+	ofParameter<float> point_size = {"Point Size", 0.001, 0.001, 10};
+	ofParameter<float> range_scale = {"range_scale", 1, 1, 10};
+	ofParameter<bool> show_noise = {"Show Noise", false};
+	ofParameter<int> display_mode = {"Display Mode", (int)MODE_RANGE, 0, (int) NUM_MODES -1};
+	ofParameter<bool> cycle_range = {"Cycle Range", false};
+	ofParameter<bool> show_image = {"Show Image", false};
+	ofParameter<bool> show_ambient = {"Show Ambient", false};
+	ofParameter<bool> cloud_swap = {"Cloud Swap", false};
+
+    ofxButton saveCloud;
+
+
     template <class T>
 	void setCloud(T* xyz, T* off, const size_t n, const size_t w, const std::array<double, 16>& extrinsic)
 	{
 		cloud = make_unique<Cloud>(xyz, off, n, w, extrinsic);
 	}
-	
+
 	void render(const ouster::LidarScan& _readScan);
 
-	void draw();
-	
+	void draw(float x, float y, float z, float rx, float ry, float rz);
+
 	void drawGui();
-	
-	
+
+
 	std::string getName() const ;
 	size_t getHeight() const ;
 	size_t getWidth() const ;
-	
-	
+    ofEasyCam cam;
+
+    std::unique_ptr<Cloud> cloud;
 private:
-	
+
 
 	 ouster::viz::AutoExposure range_ae;
 	 ouster::viz::AutoExposure intensity_ae;
 	 ouster::viz::AutoExposure ambient_ae;
 	 ouster::viz::AutoExposure reflectivity_ae;
 	 ouster::viz::BeamUniformityCorrector ambient_buc;
-	
-	
+
+
 	const std::vector<int> px_offset;
 
 	const double aspect_ratio;
     const size_t h, w;
-    
-    
-	unique_ptr<ofxIntDropdown> displayModeDropdown;
-	
+
+
+	//unique_ptr<ofxIntDropdown> displayModeDropdown;
+
 	std::string name;
-		
+
 	ofEventListeners listeners;
-		
+
 	void _cycleRangeChanged(bool&);
 	void _displayModeChanged(int&);
 
-	std::unique_ptr<Cloud> cloud;
+    void _transformChanged(float&);
+
 
 	void _setupParameters();
-	ofEasyCam cam;
-	
+
+
 };
 
 //
