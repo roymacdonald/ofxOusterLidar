@@ -120,6 +120,11 @@ void ofApp::draw(){
 	renderer->drawGui();
 	
 	
+	renderer->colorMap.img.draw(0,0, ofGetWidth(), 10);
+	
+	
+	
+	
 	
 }
 

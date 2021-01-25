@@ -91,7 +91,7 @@ public:
 	int getTimeout();
 
 
-	void draw(float x, float y, float z, float rx, float ry, float rz);
+	void draw();
 	void drawGui();
     bool _initClient();
 	unique_ptr<ofxOusterRenderer> _renderer = nullptr;

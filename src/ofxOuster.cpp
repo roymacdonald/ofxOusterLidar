@@ -216,12 +216,12 @@ void ofxOuster::_update(ofEventArgs&)
 }
 
 
-void ofxOuster::draw(float x, float y, float z, float rx, float ry, float rz)
+void ofxOuster::draw()
 {
 	if(_renderer)
 	{
 
-		_renderer->draw(x, y, z, rx, ry, rz);
+		_renderer->draw();
 	}
 }
 

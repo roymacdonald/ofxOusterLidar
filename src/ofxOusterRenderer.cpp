@@ -32,7 +32,7 @@ void ofxOusterRenderer::render(const ouster::LidarScan& _readScan)
 	if(cloud)
 	{
 
-		std::cout << "render\n";
+//		std::cout << "render\n";
 
 		using glmap_t = Eigen::Map<Eigen::Array<GLfloat, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
 
@@ -50,9 +50,9 @@ void ofxOusterRenderer::render(const ouster::LidarScan& _readScan)
         ouster::img_t<double> ambient = _readScan.field(ouster::LidarScan::AMBIENT).cast<double>();
 
 
-		printRowsCols(range, "range");
-		printRowsCols(intensity, "intensity");
-		printRowsCols(ambient, "ambient");
+//		printRowsCols(range, "range");
+//		printRowsCols(intensity, "intensity");
+//		printRowsCols(ambient, "ambient");
 
 		auto intensity_destaggered = ouster::destagger<double>(intensity, px_offset);
         auto range_destaggered = ouster::destagger<double>(range, px_offset);
@@ -97,7 +97,7 @@ void ofxOusterRenderer::render(const ouster::LidarScan& _readScan)
 //        }
 
         auto range_data = _readScan.field(ouster::LidarScan::RANGE).data();
-		std::cout << "range data size: " << _readScan.field(ouster::LidarScan::RANGE).size() << std::endl;
+//		std::cout << "range data size: " << _readScan.field(ouster::LidarScan::RANGE).size() << std::endl;
 
 
         switch (+display_mode) {
@@ -119,15 +119,6 @@ void ofxOusterRenderer::render(const ouster::LidarScan& _readScan)
         }
 
 	}
-}
-
-void ofxOusterRenderer::_transformChanged(float&)
-{
-	Cloud *c = cloud.get();
-
-	
-
-	ofLogNotice("ofxOusterRenderer::_displayModeChanged") << "Cycling range " << (cycle_range.get() ? "every 2.0 m" : "disabled");
 }
 
 
@@ -179,20 +170,12 @@ size_t ofxOusterRenderer::getWidth() const
 }
 
 
-void ofxOusterRenderer::draw(float x, float y, float z, float rx, float ry, float rz)
+void ofxOusterRenderer::draw()
 {
 	if(cloud){
-		ofPushMatrix();
-		ofTranslate(cloud->mesh.getCentroid());
-		ofTranslate(
-			ofMap(x, 0.0, 1.0, ofGetWidth() / 2, -ofGetWidth() / 2), 
-			ofMap(y, 0.0, 1.0, -ofGetHeight() / 2, ofGetHeight() / 2), 
-			ofMap(z, 0.0, 1.0, -ofGetWidth() / 2, ofGetWidth() / 2));
-		ofRotateXDeg(rx);
-		ofRotateYDeg(ry);
-		ofRotateZDeg(rz);
-		cloud->draw(range_scale.get()*100);
-		ofPopMatrix();
+		cam.begin();
+		cloud->draw(range_scale.get(), range_max.get(), colorMap);
+		cam.end();
 	}else
 	{
 		ofLogError("ofxOusterRenderer::draw" ) << "Cloud not inited";
@@ -218,46 +201,67 @@ void ofxOusterRenderer::_setupParameters()
 
 	gui.setup(name + " params");
 
-	gui.add(cloud1X);
-	gui.add(cloud1Y);
-	gui.add(cloud1Z);
-	gui.add(cloud1rotX);
-	gui.add(cloud1rotY);
-	gui.add(cloud1rotZ);
-
-	gui.add(cameraDistance);
-
 	gui.add(point_size);
 	gui.add(range_scale);
+	gui.add(range_max);
 	gui.add(show_noise);
-
-
+	
+#ifdef USE_OFX_DROPDOWN
 	map<int, string> displayModesNames = 	{
 		{MODE_RANGE, "RANGE"},
 		{MODE_INTENSITY, "INTENSITY"},
 		{MODE_AMBIENT, "AMBIENT"},
 		{MODE_REFLECTIVITY, "REFLECTIVITY"}};
 
-	//displayModeDropdown =  make_unique<ofxIntDropdown>(display_mode, displayModesNames);
-	//
-	//displayModeDropdown->disableMultipleSelection();
-	//displayModeDropdown->enableCollapseOnSelection();
 
-	//gui.add(displayModeDropdown.get());
+	displayModeDropdown =  make_unique<ofxIntDropdown>(display_mode, displayModesNames);
+	
+	displayModeDropdown->disableMultipleSelection();
+	displayModeDropdown->enableCollapseOnSelection();
+
+	gui.add(displayModeDropdown.get());
+	
+	
+	
+	map<int, string> ColorMapNames = 	{
+		{COLORMAP_VIRIDIS, "VIRIDIS"},
+		{COLORMAP_PARULA, "PARULA"},
+		{COLORMAP_MAGMA, "MAGMA"},
+		{COLORMAP_RAINBOW, "RAINBOW"},
+		{COLORMAP_TOSQEX, "TOSQEX"},
+		{COLORMAP_OUTRUN, "OUTRUN"},
+		{COLORMAP_CUBEHELIX, "CUBEHELIX"},
+		{COLORMAP_SPEZIA, "SPEZIA"}
+	};
+
+	colorMapDropdown =  make_unique<ofxIntDropdown>(color_map_mode, ColorMapNames);
+	
+	colorMapDropdown->disableMultipleSelection();
+	colorMapDropdown->enableCollapseOnSelection();
+
+	gui.add(colorMapDropdown.get());
+	
+	
+	
+#else
 	display_mode.set(MODE_RANGE);
+	gui.add(color_map_mode);
+#endif
 	gui.add(cycle_range);
 	gui.add(show_image);
 	gui.add(show_ambient);
-	gui.add(cloud_swap);
 
-	gui.add(saveCloud.setup("Save This Device's Transformation"));
 
-//	listeners.push(display_mode.newListener(this, &ofxOusterRenderer::_displayModeChanged));
-	listeners.push(cloud1X.newListener(this, &ofxOusterRenderer::_transformChanged));
-	listeners.push(cloud1Y.newListener(this, &ofxOusterRenderer::_transformChanged));
-	listeners.push(cloud1Z.newListener(this, &ofxOusterRenderer::_transformChanged));
+
+	listeners.push(display_mode.newListener(this, &ofxOusterRenderer::_displayModeChanged));
 	listeners.push(cycle_range.newListener(this, &ofxOusterRenderer::_cycleRangeChanged));
 	listeners.push(point_size.newListener([&](float&){
 		glPointSize(point_size.get());
 	}));
+	
+	listeners.push(color_map_mode.newListener([&](int& i){
+		colorMap.selectMap((ColorMaps)i);
+	}));
+	
+	
 }
