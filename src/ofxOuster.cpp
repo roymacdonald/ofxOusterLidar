@@ -1,3 +1,10 @@
+//
+//  ofxOuster.cpp
+//  ofxOuster_example2
+//
+//  Created by Roy Macdonald on 9/19/20.
+//
+
 #include "ofxOuster.hpp"
 namespace sensor = ouster::sensor;
 ofxOuster::ofxOuster()
@@ -21,14 +28,12 @@ ofxOuster::ofxOuster(const std::string& hostname_, int lidar_port_ , int imu_por
 
 void ofxOuster::setup(const std::string& hostname_, int lidar_port_, int imu_port_)
 {
-    if(!_bisSetup){
 	_bUseSimpleSetup = true;
 	hostname = hostname_;
 	lidar_port = lidar_port_;
 	imu_port = imu_port_;
 	_bisSetup = true;
 	_updateListener = ofEvents().update.newListener(this, &ofxOuster::_update);
-    }
 }
 
 ofxOuster::ofxOuster(const std::string& hostname_,
@@ -38,10 +43,9 @@ ofxOuster::ofxOuster(const std::string& hostname_,
 					 int lidar_port_, int imu_port_,
 					 int timeout_sec_)
 {
-    
 	_initValues();
 	setup(hostname_, udp_dest_host_, mode_, ts_mode_, lidar_port_, imu_port_, timeout_sec_);
-    
+	
 }
 
 void ofxOuster::setup(const std::string& hostname_,
@@ -51,7 +55,6 @@ void ofxOuster::setup(const std::string& hostname_,
 					  int lidar_port_, int imu_port_,
 					  int timeout_sec_)
 {
-    if(!_bisSetup){
 	_bUseSimpleSetup = false;
 	hostname = hostname_;
 	udp_dest_host = udp_dest_host_;
@@ -62,7 +65,6 @@ void ofxOuster::setup(const std::string& hostname_,
 	timeout_sec = timeout_sec_;
 	_bisSetup = true;
 	_updateListener = ofEvents().update.newListener(this, &ofxOuster::_update);
-    }
 }
 
 bool ofxOuster::_initClient()
@@ -216,13 +218,12 @@ void ofxOuster::_update(ofEventArgs&)
 }
 
 
-void ofxOuster::draw(float x, float y, float z, float rx, float ry, float rz)
+void ofxOuster::draw()
 {
 	if(_renderer)
 	{
-
 		ofEnableDepthTest();
-		_renderer->draw(x, y, z, rx, ry, rz);
+		_renderer->draw();
 		ofDisableDepthTest();
 	}
 }
