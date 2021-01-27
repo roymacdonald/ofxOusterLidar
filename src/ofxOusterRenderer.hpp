@@ -36,7 +36,7 @@
 
 #include "ofxOusterColorMap.h"
 
-#define USE_OFX_DROPDOWN
+//#define USE_OFX_DROPDOWN
 
 #ifdef USE_OFX_DROPDOWN
 #include "ofxDropdown.h"

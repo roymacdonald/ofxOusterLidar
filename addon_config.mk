@@ -30,6 +30,7 @@ common:
 	# specified here separated by spaces or one per line using +=
 	ADDON_INCLUDES = /usr/local/include/eigen3
 	ADDON_INCLUDES += libs/ouster/include
+	ADDON_INCLUDES += src
 	ADDON_INCLUDES_EXCLUDE = libs/ouster/include/ouster
 	
 	# any special flag that should be passed to the compiler when using this

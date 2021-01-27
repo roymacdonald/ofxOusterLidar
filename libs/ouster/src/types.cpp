@@ -227,7 +227,21 @@ void matrixToJson( const mat4d& mat, ofJson& json, const std::string& key)
 	json[key] = vec;
 }
 
+sensor_info parse_metadata(const std::string& meta) {
+    ofJson root;
+    //    Json::Value root{};
+    //    Json::CharReaderBuilder builder{};
+    //    std::string errors{};
+    //    std::stringstream ss{meta};
 
+    //if (meta.size()) {
+        root = ofJson::parse(meta);
+        //        if (!Json::parseFromStream(builder, ss, &root, &errors))
+        //            throw std::runtime_error{errors.c_str()};
+    //}
+    return metadata_from_json(root);
+
+}
 
 sensor_info metadata_from_json(const std::string& json_file) {
     
@@ -290,21 +304,6 @@ sensor_info metadata_from_json(const std::string& json_file) {
 
 		return info;
 	
-}
-sensor_info parse_metadata(const std::string& meta) {
-	ofJson root;
-//    Json::Value root{};
-//    Json::CharReaderBuilder builder{};
-//    std::string errors{};
-//    std::stringstream ss{meta};
-
-    if (meta.size()) {
-		root = ofJson::parse(meta);
-//        if (!Json::parseFromStream(builder, ss, &root, &errors))
-//            throw std::runtime_error{errors.c_str()};
-    }
-	return metadata_from_json(root);
-   
 }
 
 ofJson metadataToJson(const sensor_info& info){

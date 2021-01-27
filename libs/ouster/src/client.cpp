@@ -305,7 +305,7 @@ bool collect_metadata(client& cli, const int sock_fd, chrono::seconds timeout) {
 }  // namespace
 
 std::string get_metadata(client& cli, int timeout_sec) {
-    if (!cli.meta) {
+    if (cli.meta.empty()) {
         SOCKET sock_fd = cfg_socket(cli.hostname.c_str());
         if (sock_fd < 0) return "";
 
