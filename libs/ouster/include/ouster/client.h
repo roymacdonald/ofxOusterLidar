@@ -99,6 +99,7 @@ bool read_imu_packet(const client& cli, uint8_t* buf, const packet_format& pf);
  * @return a text blob of metadata parseable into a sensor_info struct
  */
 std::string get_metadata(client& cli, int timeout_sec = 30);
+sensor_info get_sensor_info(client& cli);
 
 }  // namespace sensor
 }  // namespace ouster

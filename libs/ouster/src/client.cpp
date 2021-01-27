@@ -1,6 +1,7 @@
 #include "ouster/client.h"
 
 #include "ofJson.h"
+#include "json/json.h"
 
 #include <algorithm>
 #include <cerrno>
@@ -232,8 +233,6 @@ bool jsonParse(ofJson& json, const std::string& input)
 	return true;
 }
 
-			   
-
 bool collect_metadata(client& cli, const int sock_fd, chrono::seconds timeout) {
 //    Json::CharReaderBuilder builder{};
 //    auto reader = std::unique_ptr<Json::CharReader>{builder.newCharReader()};
@@ -334,6 +333,10 @@ std::string get_metadata(client& cli, int timeout_sec) {
 //    builder["precision"] = 6;
 //    builder["indentation"] = "    ";
 //    return Json::writeString(builder, cli.meta);
+}
+
+sensor_info get_sensor_info(client& cli) {
+    return metadata_from_json(cli.meta);
 }
 
 std::shared_ptr<client> init_client(const std::string& hostname, int lidar_port,

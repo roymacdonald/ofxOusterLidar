@@ -1,6 +1,5 @@
 #include "ouster/types.h"
 
-#include "ofJson.h"
 #include "ofLog.h"
 
 #include <Eigen/Eigen>
@@ -227,83 +226,93 @@ void matrixToJson( const mat4d& mat, ofJson& json, const std::string& key)
 	json[key] = vec;
 }
 
-sensor_info parse_metadata(const std::string& meta) {
-    ofJson root;
-    //    Json::Value root{};
-    //    Json::CharReaderBuilder builder{};
-    //    std::string errors{};
-    //    std::stringstream ss{meta};
+//sensor_info parse_metadata(const std::string& meta) {
+//	ofJson root;
+////    Json::Value root{};
+////    Json::CharReaderBuilder builder{};
+////    std::string errors{};
+////    std::stringstream ss{meta};
+//
+//    if (meta.size()) {
+//		root = ofJson::parse(meta);
+////        if (!Json::parseFromStream(builder, ss, &root, &errors))
+////            throw std::runtime_error{errors.c_str()};
+//    }
+//	return metadata_from_json(root);
+//   
+//}
 
-    //if (meta.size()) {
-        root = ofJson::parse(meta);
-        //        if (!Json::parseFromStream(builder, ss, &root, &errors))
-        //            throw std::runtime_error{errors.c_str()};
-    //}
-    return metadata_from_json(root);
+sensor_info metadata_from_json(const ofJson& root) {
+    sensor_info info{};
+    try {
+        //auto root = ofLoadJson(json_file);
 
-}
 
-sensor_info metadata_from_json(const std::string& json_file) {
-    
-	auto root = ofLoadJson(json_file);
- 
-	 sensor_info info{};
 
-		root["hostname"].get_to(info.name);// asString();
-		root["prod_sn"].get_to(info.sn);// asString();
-		root["build_rev"].get_to(info.fw_rev);// asString();
-		std::string lidar_mode;
-		root["lidar_mode"].get_to(lidar_mode);
-		info.mode = lidar_mode_of_string(lidar_mode);
-		root["prod_line"].get_to(info.prod_line);//asString();
+        root["hostname"].get_to(info.name);// asString();
+        root["prod_sn"].get_to(info.sn);// asString();
+        root["build_rev"].get_to(info.fw_rev);// asString();
+        std::string lidar_mode;
+        root["lidar_mode"].get_to(lidar_mode);
+        info.mode = lidar_mode_of_string(lidar_mode);
+        root["prod_line"].get_to(info.prod_line);//asString();
 
-		// "data_format" introduced in fw 1.14. Fall back to common 1.13 parameters
-		// otherwise
-		if (root.contains("data_format")) {
-			root["data_format"]["pixels_per_column"].get_to(info.format.pixels_per_column);//asInt();
-			root["data_format"]["columns_per_packet"].get_to(info.format.columns_per_packet);//asInt();
-			root["data_format"]["columns_per_frame"].get_to(info.format.columns_per_frame);//asInt();
+        // "data_format" introduced in fw 1.14. Fall back to common 1.13 parameters
+        // otherwise
+        if (root.contains("data_format")) {
+            root["data_format"]["pixels_per_column"].get_to(info.format.pixels_per_column);//asInt();
+            root["data_format"]["columns_per_packet"].get_to(info.format.columns_per_packet);//asInt();
+            root["data_format"]["columns_per_frame"].get_to(info.format.columns_per_frame);//asInt();
 
-	//        for (const auto& v : root["data_format"]["pixel_shift_by_row"])
-	//            info.format.pixel_shift_by_row.push_back(v.asInt());
-			
-			info.format.pixel_shift_by_row = root["data_format"]["pixel_shift_by_row"].get<std::vector<int>>();
-			
-		} else {
-			ofLogWarning("oster::parse_metadata") << "WARNING: No data_format found.";
-			info.format = default_data_format(info.mode);
-		}
+    //        for (const auto& v : root["data_format"]["pixel_shift_by_row"])
+    //            info.format.pixel_shift_by_row.push_back(v.asInt());
 
-		// "lidar_origin_to_beam_origin_mm" introduced in fw 1.14. Fall back to
-		// common 1.13 parameters otherwise
-		if (root.contains("lidar_origin_to_beam_origin_mm")) {
-	//        info.lidar_origin_to_beam_origin_mm = root["lidar_origin_to_beam_origin_mm"].asDouble();
-			root["lidar_origin_to_beam_origin_mm"].get_to(info.lidar_origin_to_beam_origin_mm);
-		} else {
-			info.lidar_origin_to_beam_origin_mm = default_lidar_origin_to_beam_origin(info.prod_line);
-		}
+            info.format.pixel_shift_by_row = root["data_format"]["pixel_shift_by_row"].get<std::vector<int>>();
 
-		
-			info.beam_altitude_angles = root["beam_altitude_angles"].get<std::vector<double>>();
-			info.beam_azimuth_angles = root["beam_azimuth_angles"].get<std::vector<double>>();
-			info.imu_to_sensor_transform = jsonToMatrix(root, "imu_to_sensor_transform", default_imu_to_sensor_transform);
-			info.lidar_to_sensor_transform = jsonToMatrix(root, "lidar_to_sensor_transform", default_lidar_to_sensor_transform);
-//			info.imu_to_sensor_transform = root["imu_to_sensor_transform"].get<std::vector<double>>();
-//			info.lidar_to_sensor_transform = root["lidar_to_sensor_transform"].get<std::vector<double>>();
-		// for (const auto& v : root["beam_altitude_angles"])
-		//     info.beam_altitude_angles.push_back(v.asDouble());
+        }
+        else {
+            //ofLogWarning("oster::parse_metadata") << "WARNING: No data_format found.";
+            info.format = default_data_format(info.mode);
+        }
 
-		// for (const auto& v : root["beam_azimuth_angles"])
-		//     info.beam_azimuth_angles.push_back(v.asDouble());
+        // "lidar_origin_to_beam_origin_mm" introduced in fw 1.14. Fall back to
+        // common 1.13 parameters otherwise
+        if (root.contains("lidar_origin_to_beam_origin_mm")) {
+            //        info.lidar_origin_to_beam_origin_mm = root["lidar_origin_to_beam_origin_mm"].asDouble();
+            root["lidar_origin_to_beam_origin_mm"].get_to(info.lidar_origin_to_beam_origin_mm);
+        }
+        else {
+            info.lidar_origin_to_beam_origin_mm = default_lidar_origin_to_beam_origin(info.prod_line);
+        }
 
-		// for (const auto& v : root["imu_to_sensor_transform"])
-		//     info.imu_to_sensor_transform.push_back(v.asDouble());
 
-		// for (const auto& v : root["lidar_to_sensor_transform"])
-		//     info.lidar_to_sensor_transform.push_back(v.asDouble());
+        info.beam_altitude_angles = root["beam_altitude_angles"].get<std::vector<double>>();
+        info.beam_azimuth_angles = root["beam_azimuth_angles"].get<std::vector<double>>();
+        info.imu_to_sensor_transform = jsonToMatrix(root, "imu_to_sensor_transform", default_imu_to_sensor_transform);
+        info.lidar_to_sensor_transform = jsonToMatrix(root, "lidar_to_sensor_transform", default_lidar_to_sensor_transform);
+        //			info.imu_to_sensor_transform = root["imu_to_sensor_transform"].get<std::vector<double>>();
+        //			info.lidar_to_sensor_transform = root["lidar_to_sensor_transform"].get<std::vector<double>>();
+                // for (const auto& v : root["beam_altitude_angles"])
+                //     info.beam_altitude_angles.push_back(v.asDouble());
 
-		return info;
-	
+                // for (const auto& v : root["beam_azimuth_angles"])
+                //     info.beam_azimuth_angles.push_back(v.asDouble());
+
+                // for (const auto& v : root["imu_to_sensor_transform"])
+                //     info.imu_to_sensor_transform.push_back(v.asDouble());
+
+                // for (const auto& v : root["lidar_to_sensor_transform"])
+                //     info.lidar_to_sensor_transform.push_back(v.asDouble());
+    }
+    catch (nlohmann::json::type_error& e) {
+        ofLogError("ouster::metadata_from_json") << e.what();
+    }
+    catch (...) {
+        ofLogError("ouster::metadata_from_json") << "unknown error ";
+    }
+
+    return info;
+
 }
 
 ofJson metadataToJson(const sensor_info& info){
