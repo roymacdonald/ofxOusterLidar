@@ -4,10 +4,11 @@
  */
 
 #pragma once
-#include "ofJson.h"
+
 #include <Eigen/Eigen>
 #include <string>
 #include <vector>
+#include "ofJson.h"
 
 namespace ouster {
 
@@ -139,7 +140,7 @@ timestamp_mode timestamp_mode_of_string(const std::string& s);
  * @param metadata a text blob returned by get_metadata from client.h
  * @return a sensor_info struct populated with a subset of the metadata
  */
-sensor_info parse_metadata(const std::string& metadata);
+//sensor_info parse_metadata(const std::string& metadata);
 
 /**
  * Parse metadata given path to a json file.
@@ -149,7 +150,7 @@ sensor_info parse_metadata(const std::string& metadata);
  * @return a sensor_info struct populated with a subset of the metadata
  */
 sensor_info metadata_from_json(const ofJson& root);
-
+ 
 /**
  * Get string representation of metadata.
  *

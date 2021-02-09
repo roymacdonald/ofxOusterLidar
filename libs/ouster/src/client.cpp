@@ -254,37 +254,48 @@ bool collect_metadata(client& cli, const int sock_fd, chrono::seconds timeout) {
         if (chrono::steady_clock::now() >= timeout_time) return false;
         std::this_thread::sleep_for(chrono::seconds(1));
     } while (success && jsonHasStringAtKey(root, "status","INITIALIZING"));
+//    } while (success && root["status"].asString() == "INITIALIZING");
 
+//    update_json_obj(cli.meta, root);
 	cli.meta.update(root);
 	success &= jsonHasStringAtKey(cli.meta, "status","RUNNING");
-
+//    success &= cli.meta["status"].asString() == "RUNNING";
 
 
     success &= do_tcp_cmd(sock_fd, {"get_beam_intrinsics"}, res);
+//    success &= reader->parse(res.c_str(), res.c_str() + res.size(), &root, NULL);
 	success &= jsonParse(root, res);
+//    update_json_obj(cli.meta, root);
 	cli.meta.update(root);
-	
 
     success &= do_tcp_cmd(sock_fd, {"get_imu_intrinsics"}, res);
+//    success &= reader->parse(res.c_str(), res.c_str() + res.size(), &root, NULL);
+//    update_json_obj(cli.meta, root);
 	success &= jsonParse(root, res);
 	cli.meta.update(root);
 
 
     success &= do_tcp_cmd(sock_fd, {"get_lidar_intrinsics"}, res);
+//    success &= reader->parse(res.c_str(), res.c_str() + res.size(), &root, NULL);
+//    update_json_obj(cli.meta, root);
 	success &= jsonParse(root, res);
 	cli.meta.update(root);
 
+    // try to query data format
     bool got_format = true;
     got_format &= do_tcp_cmd(sock_fd, {"get_lidar_data_format"}, res);
+//    got_format &= reader->parse(res.c_str(), res.c_str() + res.size(), &root, NULL);
 	got_format &= jsonParse(root, res);
     if (got_format) cli.meta["data_format"] = root;
 
+    // get lidar mode
     success &= do_tcp_cmd(sock_fd, {"get_config_param", "active"}, res);
+//    success &= reader->parse(res.c_str(), res.c_str() + res.size(), &root, NULL);
 	success &= jsonParse(root, res);
-	
+    // merge extra info into metadata
     cli.meta["hostname"] = cli.hostname;
     cli.meta["lidar_mode"] = root["lidar_mode"];
-
+//    cli.meta["client_version"] = ouster::CLIENT_VERSION;
 
     cli.meta["json_calibration_version"] = FW_2_0;
 
@@ -449,10 +460,6 @@ bool read_lidar_packet(const client& cli, uint8_t* buf,
 
 bool read_imu_packet(const client& cli, uint8_t* buf, const packet_format& pf) {
     return recv_fixed(cli.imu_fd, buf, pf.imu_packet_size);
-}
-
-sensor_info get_sensor_info(client& cli){
-	return metadata_from_json(cli.meta);
 }
 
 }  // namespace sensor

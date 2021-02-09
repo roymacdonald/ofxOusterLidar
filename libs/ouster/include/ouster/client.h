@@ -101,8 +101,5 @@ bool read_imu_packet(const client& cli, uint8_t* buf, const packet_format& pf);
 std::string get_metadata(client& cli, int timeout_sec = 30);
 sensor_info get_sensor_info(client& cli);
 
-
-sensor_info get_sensor_info(client& cli);
-
 }  // namespace sensor
 }  // namespace ouster
