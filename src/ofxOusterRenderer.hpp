@@ -41,7 +41,7 @@
 #ifdef USE_OFX_DROPDOWN
 #include "ofxDropdown.h"
 #endif
-#include "ofxAutoReloadedShader.h"
+//#include "ofxAutoReloadedShader.h"
 #include <limits>
 // we don't align because the visualizer may be compiled with different
 // compilation options as internal C++ code, leading to problems. besides, the
@@ -80,8 +80,8 @@ class Cloud {
 
 
 
-//	ofShader pointShader;
-	ofxAutoReloadedShader pointShader;
+	ofShader pointShader;
+//	ofxAutoReloadedShader pointShader;
    public:
        ofVboMesh mesh;
        ofTexture transformationTex;
