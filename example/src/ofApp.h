@@ -35,4 +35,6 @@ class ofApp : public ofBaseApp{
 	
 	ofEventListeners listeners;
 	
+	ofEasyCam cam;
+
     };

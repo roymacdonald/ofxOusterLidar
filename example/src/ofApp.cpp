@@ -37,13 +37,14 @@ void ofApp::exit(){
 //--------------------------------------------------------------
 void ofApp::draw(){
   ofBackground(0,0,0);
-	
-	lidar.draw();
-    
-	lidar.drawGui();
-	
-	gui.draw();
-	
+  cam.begin();
+  ofEnableDepthTest();
+  lidar.draw();
+  ofDisableDepthTest();
+  cam.end();
+
+  lidar.drawGui(0);
+  gui.draw();
 }
 
 //--------------------------------------------------------------
