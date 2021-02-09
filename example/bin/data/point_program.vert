@@ -25,13 +25,7 @@ uniform float colorMapSize;
 void main(){
     vec4 local_point;
 
-    
     local_point =  vec4(position.xyz * range * range_scale, 1.0);
-    
-    // vcolor = range_max * colorMapSize;
-  vcolor = (range * colorMapSize)/(226326.f*range_max);
-    
-  gl_Position = modelViewProjectionMatrix * local_point;
-  
-
+    vcolor = (range * colorMapSize)/(226326.f*range_max);
+    gl_Position = modelViewProjectionMatrix * local_point;
 }

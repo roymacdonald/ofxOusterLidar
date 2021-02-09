@@ -172,12 +172,9 @@ size_t ofxOusterRenderer::getWidth() const
 
 void ofxOusterRenderer::draw()
 {
-	if (cloud) {
-		cam.begin();
+	if(cloud){
 		cloud->draw(range_scale.get(), range_max.get(), colorMap);
-		cam.end();
-	}
-	else
+	}else
 	{
 		ofLogError("ofxOusterRenderer::draw") << "Cloud not inited";
 	}
@@ -195,7 +192,7 @@ void ofxOusterRenderer::drawImage() {
 
 void ofxOusterRenderer::drawGui(int n = 0)
 {
-	gui.setPosition(gui.getPosition().x + (n * gui.getWidth() / 2), 0);
+	gui.setPosition(gui.getPosition().x + (n * gui.getWidth()/2), 0);
 	gui.draw();
 }
 
@@ -215,6 +212,7 @@ void ofxOusterRenderer::_setupParameters()
 	gui.add(cloudAngleZ);
 
 	gui.add(point_size);
+	gui.add(cameraDistance);
 	gui.add(range_scale);
 	gui.add(range_max);
 	gui.add(show_noise);
@@ -266,7 +264,6 @@ void ofxOusterRenderer::_setupParameters()
 
 	gui.loadFromFile(settings);
 
-
 	listeners.push(display_mode.newListener(this, &ofxOusterRenderer::_displayModeChanged));
 	listeners.push(cycle_range.newListener(this, &ofxOusterRenderer::_cycleRangeChanged));
 	listeners.push(point_size.newListener([&](float&){
@@ -275,7 +272,5 @@ void ofxOusterRenderer::_setupParameters()
 	
 	listeners.push(color_map_mode.newListener([&](int& i){
 		colorMap.selectMap((ColorMaps)i);
-	}));
-	
-	
+	}));		
 }

@@ -134,8 +134,7 @@ void ofxOuster::threadedFunction(){
 				
 				uint32_t H = _sensorInfo.format.pixels_per_column;
 				uint32_t W = _sensorInfo.format.columns_per_frame;
-				const auto& packetFormat = sensor::get_format(_sensorInfo);
-				
+				const auto &packetFormat = sensor::get_format(_sensorInfo);				
 				
 				std::vector<uint8_t> lidar_buf(packetFormat.lidar_packet_size + 1);
 				std::vector<uint8_t> imu_buf(packetFormat.imu_packet_size + 1);
