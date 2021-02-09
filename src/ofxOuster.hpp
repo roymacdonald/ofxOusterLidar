@@ -94,6 +94,7 @@ public:
 	void draw();
 	void drawGui(int n);
     bool _initClient();
+
 	unique_ptr<ofxOusterRenderer> _renderer = nullptr;
 protected:
 	
