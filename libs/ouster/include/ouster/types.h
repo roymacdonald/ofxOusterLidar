@@ -4,7 +4,7 @@
  */
 
 #pragma once
-
+#include "ofJson.h"
 #include <Eigen/Eigen>
 #include <string>
 #include <vector>
@@ -148,7 +148,7 @@ sensor_info parse_metadata(const std::string& metadata);
  * @param json_file path to a json file containing sensor metadata
  * @return a sensor_info struct populated with a subset of the metadata
  */
-sensor_info metadata_from_json(const std::string& json_file);
+sensor_info metadata_from_json(const ofJson& root);
 
 /**
  * Get string representation of metadata.

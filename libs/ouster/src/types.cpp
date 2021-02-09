@@ -229,12 +229,10 @@ void matrixToJson( const mat4d& mat, ofJson& json, const std::string& key)
 
 
 
-sensor_info metadata_from_json(const std::string& json_file) {
-    
-	auto root = ofLoadJson(json_file);
- 
+sensor_info metadata_from_json(const ofJson& root) {
 	 sensor_info info{};
-
+	try {
+ 
 		root["hostname"].get_to(info.name);// asString();
 		root["prod_sn"].get_to(info.sn);// asString();
 		root["build_rev"].get_to(info.fw_rev);// asString();
@@ -287,21 +285,19 @@ sensor_info metadata_from_json(const std::string& json_file) {
 
 		// for (const auto& v : root["lidar_to_sensor_transform"])
 		//     info.lidar_to_sensor_transform.push_back(v.asDouble());
-
+	}catch (nlohmann::json::type_error& e){
+			ofLogError("ouster::metadata_from_json") << e.what();
+	}catch(...){
+		ofLogError("ouster::metadata_from_json") << "unknown error ";
+	}
+		
 		return info;
 	
 }
 sensor_info parse_metadata(const std::string& meta) {
 	ofJson root;
-//    Json::Value root{};
-//    Json::CharReaderBuilder builder{};
-//    std::string errors{};
-//    std::stringstream ss{meta};
-
     if (meta.size()) {
 		root = ofJson::parse(meta);
-//        if (!Json::parseFromStream(builder, ss, &root, &errors))
-//            throw std::runtime_error{errors.c_str()};
     }
 	return metadata_from_json(root);
    
