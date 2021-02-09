@@ -92,7 +92,7 @@ bool ofxOuster::_initClient()
 		
 		
 		auto _metadata = sensor::get_metadata(*cli);
-		auto _sensorInfo = sensor::parse_metadata(_metadata);
+		sensor::sensor_info _sensorInfo = get_sensor_info(*cli);
 		
 		
 		ofLogVerbose("ofxOuster") << "Using lidar_mode: " << sensor::to_string(_sensorInfo.mode);
