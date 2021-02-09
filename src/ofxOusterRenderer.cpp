@@ -173,35 +173,46 @@ size_t ofxOusterRenderer::getWidth() const
 void ofxOusterRenderer::draw()
 {
 	if(cloud){
-		cam.begin();
 		cloud->draw(range_scale.get(), range_max.get(), colorMap);
-		cam.end();
 	}else
 	{
-		ofLogError("ofxOusterRenderer::draw" ) << "Cloud not inited";
+		ofLogError("ofxOusterRenderer::draw") << "Cloud not inited";
 	}
+}
 
+void ofxOusterRenderer::drawImage() {
 	if (show_image)
 	{
-		ofRectangle r (0, 0, image.getWidth(), image.getHeight());
-		ofRectangle s (0, 0, ofGetWidth(), ofGetHeight());
+		ofRectangle r(0, 0, image.getWidth(), image.getHeight());
+		ofRectangle s(0, 0, ofGetWidth(), ofGetHeight());
 		r.scaleTo(s, OF_ASPECT_RATIO_KEEP, OF_ALIGN_HORZ_CENTER, OF_ALIGN_VERT_BOTTOM, OF_ALIGN_HORZ_CENTER, OF_ALIGN_VERT_BOTTOM);
 		image.draw(r);
 	}
 }
 
-void ofxOusterRenderer::drawGui()
+void ofxOusterRenderer::drawGui(int n = 0)
 {
+	gui.setPosition(gui.getPosition().x + (n * gui.getWidth()/2), 0);
 	gui.draw();
 }
 
 
 void ofxOusterRenderer::_setupParameters()
 {
+	string settings = ofToDataPath(name + "-CloudSettings.json", true);
 
-	gui.setup(name + " params");
+	gui.setup(name + " params", settings);
+	gui.add(showPointCloud);
+
+	gui.add(cloudX);
+	gui.add(cloudY);
+	gui.add(cloudZ);
+	gui.add(cloudAngleX);
+	gui.add(cloudAngleY);
+	gui.add(cloudAngleZ);
 
 	gui.add(point_size);
+	gui.add(cameraDistance);
 	gui.add(range_scale);
 	gui.add(range_max);
 	gui.add(show_noise);
@@ -244,14 +255,14 @@ void ofxOusterRenderer::_setupParameters()
 	
 	
 #else
-	display_mode.set(MODE_RANGE);
+	gui.add(display_mode);
 	gui.add(color_map_mode);
 #endif
 	gui.add(cycle_range);
 	gui.add(show_image);
 	gui.add(show_ambient);
 
-
+	gui.loadFromFile(settings);
 
 	listeners.push(display_mode.newListener(this, &ofxOusterRenderer::_displayModeChanged));
 	listeners.push(cycle_range.newListener(this, &ofxOusterRenderer::_cycleRangeChanged));
@@ -261,7 +272,5 @@ void ofxOusterRenderer::_setupParameters()
 	
 	listeners.push(color_map_mode.newListener([&](int& i){
 		colorMap.selectMap((ColorMaps)i);
-	}));
-	
-	
+	}));		
 }

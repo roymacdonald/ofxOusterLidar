@@ -132,8 +132,7 @@ void ofxOuster::threadedFunction(){
 				
 				uint32_t H = _sensorInfo.format.pixels_per_column;
 				uint32_t W = _sensorInfo.format.columns_per_frame;
-				auto packetFormat = sensor::get_format(_sensorInfo);
-				
+				const auto &packetFormat = sensor::get_format(_sensorInfo);				
 				
 				std::vector<uint8_t> lidar_buf(packetFormat.lidar_packet_size + 1);
 				std::vector<uint8_t> imu_buf(packetFormat.imu_packet_size + 1);
@@ -183,7 +182,7 @@ void ofxOuster::_initRenderer()
 		auto H = sensorInfo.format.pixels_per_column;
 		auto W = sensorInfo.format.columns_per_frame;
 		
-		_renderer = make_unique<ofxOusterRenderer>(sensorInfo, "Renderer");
+		_renderer = make_unique<ofxOusterRenderer>(sensorInfo, "Renderer" + this->hostname);
 		
 		auto xyz_lut = make_unique<ouster::XYZLut>(ouster::make_xyz_lut(sensorInfo));
 		_renderer->setCloud(
@@ -226,12 +225,12 @@ void ofxOuster::draw()
 }
 
 
-void ofxOuster::drawGui()
+void ofxOuster::drawGui(int n)
 {
 	
 	if(_renderer)
 	{
-		_renderer->drawGui();
+		_renderer->drawGui(n);
 	}
 	
 }

@@ -1,10 +1,3 @@
-//
-//  ofxOusterRenderer.hpp
-//  lidarSketch
-//
-//  Created by Roy Macdonald on 10/12/20.
-//
-
 #pragma once
 
 
@@ -331,16 +324,12 @@ class Cloud {
 
 class ofxOusterRenderer {
 public:
-
 	ofxOusterRenderer(const ouster::sensor::sensor_info & info, const std::string& name_);
 
-
-
-
-	ofFloatImage image;
+    std::unique_ptr<Cloud> cloud;
+    
+    ofFloatImage image;
 	ofFloatImage noiseImage;
-
-
 
 	enum CloudDisplayMode {
         MODE_RANGE = 0,
@@ -351,10 +340,21 @@ public:
     };
 
 	ofxPanel gui;
+    
+    ofParameter<bool> showPointCloud = { "Show Point Cloud", true};
 
+    ofParameter<float> cloudX = { "Cloud X", 0, -ofGetWidth()/2, ofGetWidth()/2 };
+    ofParameter<float> cloudY = { "Cloud Y", 0, -ofGetHeight()/2, ofGetHeight()/2 };
+    ofParameter<float> cloudZ = { "Cloud Z", -ofGetWidth()/2, -ofGetWidth()/2, ofGetWidth()/2 };
+    
+    ofParameter<float> cameraDistance = { "Camera Distance", 0, 0, 360 };
+
+    ofParameter<float> cloudAngleX = { "Rotation X", 0, 0, 360 };
+    ofParameter<float> cloudAngleY = { "Rotation Y", 0, 0, 360 };
+    ofParameter<float> cloudAngleZ = { "Rotation Z", 0, 0, 360 };
 
 	ofParameter<float> point_size = {"Point Size", 3, 1, 10};
-	ofParameter<float> range_scale = {"range_scale", 1, 0, 1};
+	ofParameter<float> range_scale = {"range_scale", 50.0, 1.0, 100.0};
 	ofParameter<float> range_max = {"range_max", 0.5, 0, 1};
 	ofParameter<bool> show_noise = {"Show Noise", false};
 	ofParameter<int> display_mode = {"Display Mode", (int)MODE_RANGE, 0, (int) NUM_MODES -1};
@@ -362,10 +362,6 @@ public:
 	ofParameter<bool> show_image = {"Show Image", false};
 	ofParameter<bool> show_ambient = {"Show Ambient", false};
 	ofParameter<int> color_map_mode = {"Color Map Mode", 0, 0, (int)COLORMAP_NUM -1};
-	
-
-//    ofxButton saveCloud;
-
 
     template <class T>
 	void setCloud(T* xyz, T* off, const size_t n, const size_t w, const std::array<double, 16>& extrinsic)
@@ -377,48 +373,39 @@ public:
 
 	void draw();
 
-	void drawGui();
+	void drawGui(int n);
+    void drawImage();
 
-
-	std::string getName() const ;
-	size_t getHeight() const ;
-	size_t getWidth() const ;
-	
+	std::string getName() const;
+	size_t getHeight() const;
+	size_t getWidth() const;
 	
 	ofxOusterColorMap colorMap;
 	
 private:
-
-
 	 ouster::viz::AutoExposure range_ae;
 	 ouster::viz::AutoExposure intensity_ae;
 	 ouster::viz::AutoExposure ambient_ae;
 	 ouster::viz::AutoExposure reflectivity_ae;
 	 ouster::viz::BeamUniformityCorrector ambient_buc;
 
-
 	const std::vector<int> px_offset;
 
 	const double aspect_ratio;
     const size_t h, w;
 
-
 #ifdef USE_OFX_DROPDOWN
 	unique_ptr<ofxIntDropdown> displayModeDropdown;
 	unique_ptr<ofxIntDropdown> colorMapDropdown;
 #endif
+
 	std::string name;
 
 	ofEventListeners listeners;
 
 	void _cycleRangeChanged(bool&);
 	void _displayModeChanged(int&);
-
-	std::unique_ptr<Cloud> cloud;
-
 	void _setupParameters();
-	ofEasyCam cam;
-
 };
 
 //

@@ -1,10 +1,3 @@
-//
-//  ofxOusterColorMap.h
-//  renderererTest
-//
-//  Created by Roy Macdonald on 1/22/21.
-//
-
 #pragma once
 #include "ouster/colormaps.h"
 #include "ofTexture.h"
