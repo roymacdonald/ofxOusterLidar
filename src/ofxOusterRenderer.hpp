@@ -335,7 +335,7 @@ public:
 	ofxOusterRenderer(const ouster::sensor::sensor_info & info, const std::string& name_);
 
 
-
+    std::unique_ptr<Cloud> cloud;
 
 	ofFloatImage image;
 	ofFloatImage noiseImage;
@@ -352,9 +352,18 @@ public:
 
 	ofxPanel gui;
 
+    ofParameter<bool> showPointCloud = { "Show Point Cloud", true };
+    ofParameter<float> cloudX = { "Cloud X", 0, -ofGetWidth() / 2, ofGetWidth() / 2 };
+    ofParameter<float> cloudY = { "Cloud Y", 0, -ofGetHeight() / 2, ofGetHeight() / 2 };
+    ofParameter<float> cloudZ = { "Cloud Z", -ofGetWidth() / 2, -ofGetWidth() / 2, ofGetWidth() / 2 };
+    ofParameter<float> cameraDistance = { "Camera Distance", 0, 0, 360 };
+    ofParameter<float> cloudAngleX = { "Rotation X", 0, 0, 360 };
+    ofParameter<float> cloudAngleY = { "Rotation Y", 0, 0, 360 };
+    ofParameter<float> cloudAngleZ = { "Rotation Z", 0, 0, 360 };
 
-	ofParameter<float> point_size = {"Point Size", 3, 1, 10};
-	ofParameter<float> range_scale = {"range_scale", 1, 0, 1};
+
+    ofParameter<float> range_scale = { "range_scale", 10.0, 1.0, 100.0 };
+    ofParameter<float> point_size = {"Point Size", 3, 1, 10};
 	ofParameter<float> range_max = {"range_max", 0.5, 0, 1};
 	ofParameter<bool> show_noise = {"Show Noise", false};
 	ofParameter<int> display_mode = {"Display Mode", (int)MODE_RANGE, 0, (int) NUM_MODES -1};
@@ -362,10 +371,6 @@ public:
 	ofParameter<bool> show_image = {"Show Image", false};
 	ofParameter<bool> show_ambient = {"Show Ambient", false};
 	ofParameter<int> color_map_mode = {"Color Map Mode", 0, 0, (int)COLORMAP_NUM -1};
-	
-
-//    ofxButton saveCloud;
-
 
     template <class T>
 	void setCloud(T* xyz, T* off, const size_t n, const size_t w, const std::array<double, 16>& extrinsic)
@@ -377,12 +382,12 @@ public:
 
 	void draw();
 
-	void drawGui();
+    void drawGui(int n);
+    void drawImage();
 
-
-	std::string getName() const ;
-	size_t getHeight() const ;
-	size_t getWidth() const ;
+	std::string getName() const;
+	size_t getHeight() const;
+	size_t getWidth() const;
 	
 	
 	ofxOusterColorMap colorMap;
@@ -414,7 +419,7 @@ private:
 	void _cycleRangeChanged(bool&);
 	void _displayModeChanged(int&);
 
-	std::unique_ptr<Cloud> cloud;
+
 
 	void _setupParameters();
 	ofEasyCam cam;
