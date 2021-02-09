@@ -54,12 +54,12 @@ std::string socket_get_error() {
 #ifdef _WIN32
     int errnum = WSAGetLastError();
     char buf[256] = {0};
-    if (FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, errnum, 0, buf,
-                      sizeof(buf), NULL) != 0) {
-        return std::string(buf);
-    } else {
-        return std::string{"Unknown WSA error "} + std::to_string(errnum);
-    }
+    //if (FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, errnum, 0, (LPWSTR) buf,
+    //                  sizeof(buf), NULL) != 0) {
+    //    return std::string(buf);
+    //} else {
+    return std::string{"Unknown WSA error "} + std::to_string(errnum);
+    //}
 #else
     return std::strerror(errno);
 #endif

@@ -81,7 +81,7 @@ class Cloud {
 
 
 	ofShader pointShader;
-//	ofxAutoReloadedShader pointShader;
+	//ofxAutoReloadedShader pointShader;
    public:
        ofVboMesh mesh;
        ofTexture transformationTex;
@@ -178,7 +178,7 @@ class Cloud {
     void setRange(T* x) {
         std::copy(x, x + n, range_data.begin());
 
-		std::cout << "Cloud::setRange " << range_data.size() << std::endl;
+		//std::cout << "Cloud::setRange " << range_data.size() << std::endl;
 
 		float mx = - std::numeric_limits<float>::max();
 		float mn = -mx;
@@ -188,7 +188,7 @@ class Cloud {
 			if(r < mn) mn = r;
 		}
 
-		std::cout << "Range min: " << mn << " max: " << mx << std::endl;
+		//std::cout << "Range min: " << mn << " max: " << mx << std::endl;
 
 		pointShader.begin();
 		mesh.getVbo().setAttributeData(pointShader.getAttributeLocation("range"), range_data.data(), 1, n , GL_STATIC_DRAW, sizeof(GLfloat));
@@ -208,7 +208,7 @@ class Cloud {
     template <class T>
     void setKey(T* x) {
         std::copy(x, x + n, key_data.begin());
-		std::cout << "Cloud::setKey " << key_data.size() << std::endl;
+		//std::cout << "Cloud::setKey " << key_data.size() << std::endl;
 		pointShader.begin();
 		mesh.getVbo().setAttributeData(pointShader.getAttributeLocation("key"), key_data.data(), 1, n , GL_STATIC_DRAW, sizeof(GLfloat));
 
@@ -242,7 +242,7 @@ class Cloud {
 
 		std::vector<glm::vec3> xyz_data (n);
 		// I am not sure if all this is necesary
-		std::cout << "setXYZ: " << n << std::endl;
+//		std::cout << "setXYZ: " << n << std::endl;
         for (size_t i = 0; i < n; i++) {
 
 				xyz_data[i].x = static_cast<float>(xyz[i + n * 0]);

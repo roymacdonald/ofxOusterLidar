@@ -324,10 +324,6 @@ std::string get_metadata(client& cli, int timeout_sec) {
 //    return Json::writeString(builder, cli.meta);
 }
 
-sensor_info get_sensor_info(client& cli) {
-    return metadata_from_json(cli.meta);
-}
-
 std::shared_ptr<client> init_client(const std::string& hostname, int lidar_port,
                                     int imu_port) {
     auto cli = std::make_shared<client>();

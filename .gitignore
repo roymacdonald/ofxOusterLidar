@@ -85,3 +85,8 @@ Desktop.ini
 
 # Android
 .csettings
+example/example.sln
+example/example.vcxproj
+example/example.vcxproj.filters
+example/example.vcxproj.user
+example/icon.rc
