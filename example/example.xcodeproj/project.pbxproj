@@ -882,7 +882,7 @@
 					src,
 					../../../addons/ofxDropdown/src,
 					../../../addons/ofxGui/src,
-					/usr/local/include/eigen3,
+					/usr/local/opt/eigen/include/eigen3,
 					../../../addons/ofxOusterLidar/libs/ouster/include,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
@@ -910,9 +910,8 @@
 					src,
 					../../../addons/ofxDropdown/src,
 					../../../addons/ofxGui/src,
-					/usr/local/include/eigen3,
+					/usr/local/opt/eigen/include/eigen3,
 					../../../addons/ofxOusterLidar/libs/ouster/include,
-					/usr/local/Cellar/eigen/3.4.0_1/include/eigen3/,
 				);
 				ICON = "$(ICON_NAME_RELEASE)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
@@ -956,7 +955,7 @@
 					src,
 					../../../addons/ofxDropdown/src,
 					../../../addons/ofxGui/src,
-					/usr/local/include/eigen3,
+					/usr/local/opt/eigen/include/eigen3,
 					../../../addons/ofxOusterLidar/libs/ouster/include,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
@@ -993,7 +992,7 @@
 					src,
 					../../../addons/ofxDropdown/src,
 					../../../addons/ofxGui/src,
-					/usr/local/include/eigen3,
+					/usr/local/opt/eigen/include/eigen3,
 					../../../addons/ofxOusterLidar/libs/ouster/include,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
@@ -1021,9 +1020,8 @@
 					src,
 					../../../addons/ofxDropdown/src,
 					../../../addons/ofxGui/src,
-					/usr/local/include/eigen3,
+					/usr/local/opt/eigen/include/eigen3,
 					../../../addons/ofxOusterLidar/libs/ouster/include,
-					/usr/local/Cellar/eigen/3.4.0_1/include/eigen3/,
 				);
 				ICON = "$(ICON_NAME_DEBUG)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
@@ -1057,9 +1055,8 @@
 					src,
 					../../../addons/ofxDropdown/src,
 					../../../addons/ofxGui/src,
-					/usr/local/include/eigen3,
+					/usr/local/opt/eigen/include/eigen3,
 					../../../addons/ofxOusterLidar/libs/ouster/include,
-					/usr/local/Cellar/eigen/3.4.0_1/include/eigen3/,
 				);
 				ICON = "$(ICON_NAME_RELEASE)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
