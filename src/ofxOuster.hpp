@@ -68,38 +68,52 @@ public:
 			   int timeout_sec_ = 30);
 		
 	
-//	const std::vector<uint8_t>& getLidarBuffer() const;
-//
-//	const std::vector<uint8_t>& getImuBuffer() const;
-	
+
 	const string& getMetadata() const;
 	
+    
 	const ouster::sensor::sensor_info& getSensorInfo() const;
 	
 	
 	
 	ouster::sensor::lidar_mode getLidarMode();
 	
+    
+    
 	ouster::sensor::timestamp_mode getTimestampMode();
 	
-	
-	
+
+    
+    /// Sets the position of the Gui that gets drawn by calling drawGui()
+    /// @param pos the position in the current viewport
+    void setGuiPosition(const glm::vec2& pos);
+    
+    
+    /// Returns the network port at which the lidar data is being received
 	int getLidarPort();
 	
+    /// Returns the network port at which the IMU data is being received
 	int getImuPort();
 	
+    /// Returns the amout of time that it will wait for the lidar to connect.
 	int getTimeout();
 
 
+    /// Draw the pointcloud and raw image data (if enabled).
+    /// This already uses an interactive camera (ofEasyCam). No need to use another camera.
 	void draw();
+    
+    /// Draws the Gui to set the drawing parameters
 	void drawGui();
-    bool _initClient();
+    
+    /// The pointer to the renderer in case access to it is needed.
 	unique_ptr<ofxOusterRenderer> _renderer = nullptr;
+    
 protected:
 	
 	virtual void threadedFunction() override;
 private:
-	
+	bool _initClient();
 	
 	std::atomic<bool> _clientInited;
 	
@@ -150,6 +164,6 @@ private:
 	
 	ouster::LidarScan _readScan;
 
-
+    glm::vec2 _guiPos = {10,10};
 	
 };
