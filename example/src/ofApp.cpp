@@ -11,15 +11,18 @@ void ofApp::setup(){
 	gui.add(lidarIp);
 	gui.add(udpDestIp);
 	gui.add(connect);
-
-	gui.loadFromFile(settings);
-	
+    
+    if(ofFile::doesFileExist(settings)){
+        gui.loadFromFile(settings);
+    }
 	
 	listeners.push(connect.newListener([&](){
 		lidar.setup(lidarIp.get(), udpDestIp.get());
 		lidar.startThread();
 	}));
-
+    
+    
+    lidar.setGuiPosition(gui.getShape().getBottomLeft() + glm::vec2(0, 20));
     
 }
 

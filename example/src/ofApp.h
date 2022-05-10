@@ -29,8 +29,8 @@ class ofApp : public ofBaseApp{
 	ofxOuster lidar;
 
 	ofxPanel gui;
-	ofParameter<string> lidarIp = {"Lidar's IP", "192.168.x.x"};
-	ofParameter<string> udpDestIp = {"UDP dest IP", "192.168.x.x"};
+	ofParameter<string> lidarIp = {"Lidar's IP", "192.168.0.155"};
+	ofParameter<string> udpDestIp = {"UDP dest IP", "192.168.0.100"};
 	ofParameter<void> connect = {"Connect"};
 	
 	ofEventListeners listeners;
