@@ -192,6 +192,8 @@ void ofxOuster::_initRenderer()
 							H * W,
 							W,
 							{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1});
+        
+        _renderer->setGuiPosition(_guiPos);
 	}
 }
 
@@ -292,3 +294,11 @@ void ofxOuster::_initValues()
 	
 }
 
+void ofxOuster::setGuiPosition(const glm::vec2& pos){
+    if(_renderer)
+    {
+        _renderer->setGuiPosition(pos);
+    }else{
+        _guiPos = pos;
+    }
+}
