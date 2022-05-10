@@ -1,6 +1,59 @@
 #include "ofxOusterRenderer.hpp"
 
-
+#define STRINGIFY(x) #x
+void Cloud::loadShader(){
+  static const string shader_header = "#version 150\n";
+        
+        static const string fragShader = shader_header + STRINGIFY(
+        in float vcolor;
+        uniform sampler2DRect palette;
+        out vec4 color;
+        void main() {
+            color = texture(palette, vec2(vcolor, 1));
+        }
+        );
+        
+        string vertShader = shader_header + STRINGIFY(
+        in vec4 position;
+        in vec3 offset;
+        in float range;
+        in float key;
+        in float trans_index;
+        uniform sampler2D transformation;
+        uniform mat4 modelMatrix;
+        uniform mat4 modelViewProjectionMatrix;
+        uniform mat4 projectionMatrix;
+        uniform mat4 modelViewMatrix;
+        uniform mat4 textureMatrix;
+        uniform mat4 globalColor;
+        uniform float range_scale;
+        uniform float range_max;
+        uniform mat4 extrinsic;
+        uniform float colorMapSize;
+        out float vcolor;
+        void main(){
+            vec4 local_point;
+            local_point =  vec4(position.xyz * range * range_scale, 1.0);
+            vcolor = (range * colorMapSize)/(226326.f*range_max);
+            gl_Position = modelViewProjectionMatrix * local_point;
+        }
+        );
+        
+        bool _bVertLoaded = pointShader.setupShaderFromSource(GL_VERTEX_SHADER, vertShader);
+        bool _bFragLoaded = pointShader.setupShaderFromSource(GL_FRAGMENT_SHADER, fragShader);
+        
+        if(ofIsGLProgrammableRenderer()){
+            pointShader.bindDefaults();
+        }
+        pointShader.linkProgram();
+        
+        
+//        if(!pointShader.load("point_program"))
+        if(!_bVertLoaded || !_bFragLoaded)
+        {
+            std::cout << "point shader FAILED to load\n";
+        }
+}
 
 ofxOusterRenderer::ofxOusterRenderer(const ouster::sensor::sensor_info & info, const std::string& name_)
 :name(name_)
@@ -19,6 +72,7 @@ w(info.format.columns_per_frame)
 	image.allocate(  w, h *3 , OF_IMAGE_GRAYSCALE);
 
 	_setupParameters();
+    cam.setNearClip(0);
 }
 
 
@@ -32,21 +86,19 @@ void ofxOusterRenderer::render(const ouster::LidarScan& _readScan)
 	if(cloud)
 	{
 
-//		std::cout << "render\n";
-
 		using glmap_t = Eigen::Map<Eigen::Array<GLfloat, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
 
 		ouster::img_t<double> range = _readScan.field(ouster::LidarScan::RANGE).cast<double>();
-//        if (show_image || display_mode == MODE_RANGE) {
-//            if (!cycle_range) {
+        if (show_image || display_mode == MODE_RANGE) {
+            if (!cycle_range) {
                 range_ae( Eigen::Map<Eigen::ArrayXd>(range.data(), range.size()));
-//            }
-//        }
+            }
+        }
 		ouster::img_t<double> intensity = _readScan.field(ouster::LidarScan::INTENSITY).cast<double>();
 
-//        if (show_image || display_mode == MODE_INTENSITY) {
+        if (show_image || display_mode == MODE_INTENSITY) {
             intensity_ae( Eigen::Map<Eigen::ArrayXd>(intensity.data(), intensity.size()));
-//        }
+        }
         ouster::img_t<double> ambient = _readScan.field(ouster::LidarScan::AMBIENT).cast<double>();
 
 
@@ -73,7 +125,7 @@ void ofxOusterRenderer::render(const ouster::LidarScan& _readScan)
         glmap_t(imdata.getData() + w * h, h, w) = intensity_destaggered.cast<GLfloat>();
 
         ouster::img_t<double> ambient_destaggered{h, w};
-//        if ((show_image && show_ambient) || display_mode == MODE_AMBIENT) {
+        if ((show_image && show_ambient) || display_mode == MODE_AMBIENT) {
             // we need to destagger ambient because the
             // BeamUniformityCorrector only works on destaggered stuff
             ambient_destaggered = ouster::destagger<double>(ambient, px_offset);
@@ -81,12 +133,12 @@ void ofxOusterRenderer::render(const ouster::LidarScan& _readScan)
             ambient_ae(Eigen::Map<Eigen::ArrayXd>(ambient_destaggered.data(),
                                                   ambient_destaggered.size()));
 
-//            if (show_image && show_ambient) {
+            if (show_image && show_ambient) {
                 glmap_t(imdata.getData() + 2 * w * h, h, w) = ambient_destaggered.cast<GLfloat>();
-//            }
-//        }
+            }
+        }
 
-//        if (show_image) {
+        if (show_image) {
 //            if (show_ambient) {
 //				image.resize(w, h);
 ////                point_viz.resizeImage(w, 3 * h);
@@ -94,7 +146,7 @@ void ofxOusterRenderer::render(const ouster::LidarScan& _readScan)
 ////                point_viz.resizeImage(w, 2 * h);
 //            }
 			image.update();
-//        }
+        }
 
         auto range_data = _readScan.field(ouster::LidarScan::RANGE).data();
 //		std::cout << "range data size: " << _readScan.field(ouster::LidarScan::RANGE).size() << std::endl;
@@ -264,4 +316,8 @@ void ofxOusterRenderer::_setupParameters()
 	}));
 	
 	
+}
+
+void ofxOusterRenderer::setGuiPosition(const glm::vec2& pos){
+    gui.setPosition(pos.x, pos.y);
 }
