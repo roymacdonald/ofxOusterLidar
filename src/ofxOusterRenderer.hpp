@@ -322,7 +322,22 @@ class Cloud {
 		pointShader.end();
 		
 	}
+    
+    /**
+     * Get the range data that was set using setRange
+     */
+    const std::vector<GLfloat>& getRangeData(){
+        return range_data;
+    }
 
+    
+    /**
+     * Returns the mesh that is used for rendering the point cloud but it does not have the range data applied to it.
+     * Although this mesh is build so it represents the lidars configuration, so the only thing that needs to be done is to multiply each vertex by the range data to get the real point cloud
+     */
+    const ofVboMesh& getMesh(){
+        return mesh;
+    }
 
 };
 
@@ -387,6 +402,14 @@ public:
     
 	ofxOusterColorMap colorMap;
 	
+    
+    /// returns the collections of points that make the point cloud.
+    /// This points are already transformed into realworld coordinates and are in the lidar's coordinate space,
+    /// which means that the (0,0,0) is at the center of the lidar.
+    const vector<glm::vec3>& getPointCloud();
+    
+    ofEasyCam & getDrawingCamera();
+    
 private:
 
 
@@ -414,11 +437,14 @@ private:
 	void _cycleRangeChanged(bool&);
 	void _displayModeChanged(int&);
 
-	std::unique_ptr<Cloud> cloud;
+	std::unique_ptr<Cloud> cloud = nullptr;
 
 	void _setupParameters();
-	ofEasyCam cam;
 
+    ofEasyCam cam;
+
+    vector<glm::vec3> pointCloud;
+    
 };
 
 //

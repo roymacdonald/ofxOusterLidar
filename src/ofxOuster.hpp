@@ -106,13 +106,23 @@ public:
     /// Draws the Gui to set the drawing parameters
 	void drawGui();
     
-    /// The pointer to the renderer in case access to it is needed.
-	unique_ptr<ofxOusterRenderer> _renderer = nullptr;
+
+    /// get the pointer to the renderer in case access to it is needed.
+    ofxOusterRenderer* getRenderer();
+    
+
     
 protected:
 	
 	virtual void threadedFunction() override;
 private:
+    
+    
+    /// The pointer to the renderer in case access to it is needed.
+    unique_ptr<ofxOusterRenderer> _renderer = nullptr;
+    
+
+    
 	bool _initClient();
 	
 	std::atomic<bool> _clientInited;

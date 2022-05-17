@@ -302,3 +302,11 @@ void ofxOuster::setGuiPosition(const glm::vec2& pos){
         _guiPos = pos;
     }
 }
+
+ofxOusterRenderer* ofxOuster::getRenderer(){
+    if(_renderer){
+        return _renderer.get();
+    }else{
+        return nullptr;
+    }
+}

@@ -321,3 +321,27 @@ void ofxOusterRenderer::_setupParameters()
 void ofxOusterRenderer::setGuiPosition(const glm::vec2& pos){
     gui.setPosition(pos.x, pos.y);
 }
+
+
+const vector<glm::vec3>& ofxOusterRenderer::getPointCloud(){
+    
+    if(cloud){
+        pointCloud = cloud->getMesh().getVertices();
+        const auto & range = cloud->getRangeData();
+        if(range.size() != pointCloud.size()){
+            ofLogNotice("ofxOusterRenderer::getPointCloud") << "pointCloud mesh and range data differ in size!";
+        }
+        size_t n = std::min(range.size(), pointCloud.size());
+        for(size_t i = 0; i < n; i ++){
+            pointCloud[i] *= range[i];
+        }
+    }else{
+        ofLogNotice("ofxOusterRenderer::getPointCloud") << "the cloud has not been setup. cant retrieve its points.";
+    }
+    return pointCloud;
+}
+
+
+ofEasyCam & ofxOusterRenderer::getDrawingCamera(){
+    return cam;
+}
