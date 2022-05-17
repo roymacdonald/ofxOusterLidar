@@ -41,17 +41,50 @@ void ofApp::exit(){
 void ofApp::draw(){
   ofBackground(0,0,0);
 	
-	lidar.draw();
+    if(bShowStoredPoints && lidar.getRenderer()){
+        lidar.getRenderer()->getDrawingCamera().begin();
+        ofPushStyle();
+        ofSetColor(ofColor::red);
+        storedPoints.draw();
+        ofPopStyle();
+        lidar.getRenderer()->getDrawingCamera().end();
+    }
     
-	lidar.drawGui();
-	
+    if(bShowLivePoints){
+        lidar.draw();
+    
+        lidar.drawGui();
+    }
 	gui.draw();
 	
+    stringstream ss;
+    
+    ss << "Press [ key ]:\n";
+    ss << "      [space]: to store the current point cloud.\n";
+    ss << "      [  1  ]: to " << (bShowStoredPoints?"HIDE":"SHOW") << " Stored Points.\n" ;
+    ss << "      [  2  ]: to " << (bShowLivePoints?"HIDE":"SHOW") << " Live Points.";
+    
+    
+    ofBitmapFont bf;
+    auto r = bf.getBoundingBox(ss.str(), 0, 0);
+    
+    ofDrawBitmapStringHighlight(ss.str(), 20, ofGetHeight() - 20 - r.height);
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 
+    if(key == ' '){
+        if(lidar.getRenderer()){
+            storedPoints.setMode(OF_PRIMITIVE_POINTS);
+            storedPoints.addVertices(lidar.getRenderer()->getPointCloud());
+        }
+    }else if(key == '1'){
+        bShowStoredPoints ^= true;
+    }else if(key == '2'){
+        bShowLivePoints ^= true;
+    }
 }
 
 //--------------------------------------------------------------

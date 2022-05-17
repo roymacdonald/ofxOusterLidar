@@ -34,5 +34,10 @@ class ofApp : public ofBaseApp{
 	ofParameter<void> connect = {"Connect"};
 	
 	ofEventListeners listeners;
-	
+
+    ofMesh storedPoints;
+    
+    bool bShowStoredPoints = false;
+    bool bShowLivePoints = true;
+    
     };
