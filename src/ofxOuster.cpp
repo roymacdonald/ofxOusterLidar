@@ -109,6 +109,7 @@ bool ofxOuster::_initClient()
 		_clientInited = true;
 		return true;
 	}
+    return false;
 }
 
 void ofxOuster::threadedFunction(){
