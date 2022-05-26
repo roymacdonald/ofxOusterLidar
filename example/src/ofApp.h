@@ -39,5 +39,7 @@ class ofApp : public ofBaseApp{
     
     bool bShowStoredPoints = false;
     bool bShowLivePoints = true;
+
+    ofEasyCam cam;
     
     };

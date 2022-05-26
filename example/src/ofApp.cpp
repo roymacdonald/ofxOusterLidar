@@ -42,16 +42,16 @@ void ofApp::draw(){
   ofBackground(0,0,0);
 	
     if(bShowStoredPoints && lidar.getRenderer()){
-        lidar.getRenderer()->getDrawingCamera().begin();
+        cam.begin();
         ofPushStyle();
         ofSetColor(ofColor::red);
         storedPoints.draw();
         ofPopStyle();
-        lidar.getRenderer()->getDrawingCamera().end();
+        cam.end();
     }
     
     if(bShowLivePoints){
-        lidar.draw();
+        lidar.draw(cam);
     
         lidar.drawGui();
     }
