@@ -92,7 +92,7 @@ bool ofxOuster::_initClient()
 		
 		
 		auto _metadata = sensor::get_metadata(*cli);
-		sensor::sensor_info _sensorInfo = get_sensor_info(*cli);
+        sensor::sensor_info _sensorInfo = sensor::parse_metadata(_metadata);
 		
 		
 		ofLogVerbose("ofxOuster") << "Using lidar_mode: " << sensor::to_string(_sensorInfo.mode);
@@ -219,12 +219,12 @@ void ofxOuster::_update(ofEventArgs&)
 }
 
 
-void ofxOuster::draw()
+void ofxOuster::draw(ofEasyCam & cam)
 {
 	if(_renderer)
 	{
 
-		_renderer->draw();
+		_renderer->draw(cam);
 	}
 }
 

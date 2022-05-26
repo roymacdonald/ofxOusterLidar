@@ -24,8 +24,7 @@
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 #include "ouster/colormaps.h"
-#include "ouster/autoexposure.h"
-#include "ouster/beam_uniformity.h"
+#include "ouster/image_processing.h"
 #include "ouster/lidar_scan.h"
 #include "ouster/types.h"
 
@@ -388,7 +387,7 @@ public:
 
 	void render(const ouster::LidarScan& _readScan);
 
-	void draw();
+	void draw(ofEasyCam &cam);
 
 	void drawGui();
 
@@ -408,7 +407,7 @@ public:
     /// which means that the (0,0,0) is at the center of the lidar.
     const vector<glm::vec3>& getPointCloud();
     
-    ofEasyCam & getDrawingCamera();
+    
     
 private:
 
@@ -441,7 +440,7 @@ private:
 
 	void _setupParameters();
 
-    ofEasyCam cam;
+//    ofEasyCam cam;
 
     vector<glm::vec3> pointCloud;
     

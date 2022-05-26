@@ -72,7 +72,7 @@ w(info.format.columns_per_frame)
 	image.allocate(  w, h *3 , OF_IMAGE_GRAYSCALE);
 
 	_setupParameters();
-    cam.setNearClip(0);
+    
 }
 
 
@@ -222,7 +222,7 @@ size_t ofxOusterRenderer::getWidth() const
 }
 
 
-void ofxOusterRenderer::draw()
+void ofxOusterRenderer::draw(ofEasyCam &cam)
 {
 	if(cloud){
 		cam.begin();
@@ -342,6 +342,3 @@ const vector<glm::vec3>& ofxOusterRenderer::getPointCloud(){
 }
 
 
-ofEasyCam & ofxOusterRenderer::getDrawingCamera(){
-    return cam;
-}
