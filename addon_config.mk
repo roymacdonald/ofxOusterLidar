@@ -30,8 +30,12 @@ common:
 	# specified here separated by spaces or one per line using +=
 # 	ADDON_INCLUDES = /usr/local/include/eigen3
 	# set the following line to the install location of eigen3
-	ADDON_INCLUDES = /usr/local/opt/eigen/include/eigen3
+# 	ADDON_INCLUDES = /usr/local/opt/eigen/include/eigen3
+	ADDON_INCLUDES = /opt/homebrew/opt/eigen/include/eigen3
 	ADDON_INCLUDES += libs/ouster/include
+	ADDON_INCLUDES += libs/optional-lite
+	ADDON_INCLUDES += libs/libtins/include
+	ADDON_INCLUDES += libs/jsoncpp/include
 	ADDON_INCLUDES_EXCLUDE = libs/ouster/include/ouster
 	
 	# any special flag that should be passed to the compiler when using this
@@ -80,4 +84,6 @@ linuxarmv7l:
 android/armeabi:	
 android/armeabi-v7a:	
 osx:
+	ADDON_LIBS = libs/libtins/lib/libtins.4.4.dylib
+	ADDON_LIBS += libs/jsoncpp/lib/libjsoncpp.25.dylib
 ios:
