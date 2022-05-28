@@ -32,7 +32,9 @@ class ofApp : public ofBaseApp{
 	ofParameter<string> lidarIp = {"Lidar's IP", "192.168.0.155"};
 	ofParameter<string> udpDestIp = {"UDP dest IP", "192.168.0.100"};
 	ofParameter<void> connect = {"Connect"};
-	
+
+    ofParameter<float> sphereSize = {"sphereSize", 10, 1, 1000};
+    
 	ofEventListeners listeners;
 
     ofMesh storedPoints;

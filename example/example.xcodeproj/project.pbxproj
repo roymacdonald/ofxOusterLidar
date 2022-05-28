@@ -46,6 +46,43 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
+			<key>EE321D53930119AC9E1B5EDD</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>4</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>ofxOusterIMU.h</string>
+				<key>path</key>
+				<string>../../../addons/ofxOusterLidar/src/ofxOusterIMU.h</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>8CE0A206C3C4BD5DC043DEF2</key>
+			<dict>
+				<key>fileRef</key>
+				<string>13BE42BCC16E454FF748E6B3</string>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+			</dict>
+			<key>13BE42BCC16E454FF748E6B3</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.cpp.cpp</string>
+				<key>fileEncoding</key>
+				<string>4</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>ofxOusterIMU.cpp</string>
+				<key>path</key>
+				<string>../../../addons/ofxOusterLidar/src/ofxOusterIMU.cpp</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
 			<key>ABA79DCB91EA2570D94DA62A</key>
 			<dict>
 				<key>explicitFileType</key>
@@ -83,6 +120,8 @@
 					<string>04C2F851FEB61306F6DE8EF7</string>
 					<string>C9279CEFFFDB53519DFD48BC</string>
 					<string>ABA79DCB91EA2570D94DA62A</string>
+					<string>13BE42BCC16E454FF748E6B3</string>
+					<string>EE321D53930119AC9E1B5EDD</string>
 					<string>785AA119473BEC04208EED38</string>
 					<string>5893313792222700DCDED212</string>
 				</array>
@@ -2286,10 +2325,230 @@
 				<key>sourceTree</key>
 				<string>&lt;group&gt;</string>
 			</dict>
+			<key>0E7A80BB4DCB8AC6523F8D7C</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>4</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>allocator.h</string>
+				<key>path</key>
+				<string>../../../addons/ofxOusterLidar/libs/jsoncpp/include/json/allocator.h</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>E25C81FCB68814498E3B3E32</key>
+			<dict>
+				<key>fileRef</key>
+				<string>43979FE865AC34594D0CE36C</string>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+			</dict>
+			<key>43979FE865AC34594D0CE36C</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.c</string>
+				<key>fileEncoding</key>
+				<string>4</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>FusionOffset.c</string>
+				<key>path</key>
+				<string>../../../addons/ofxOusterLidar/libs/fusion/src/FusionOffset.c</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>9A5549BBAB138680296AFD39</key>
+			<dict>
+				<key>fileRef</key>
+				<string>8B8547F03CA6278F9C6CACBF</string>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+			</dict>
+			<key>8B8547F03CA6278F9C6CACBF</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.c</string>
+				<key>fileEncoding</key>
+				<string>4</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>FusionCompass.c</string>
+				<key>path</key>
+				<string>../../../addons/ofxOusterLidar/libs/fusion/src/FusionCompass.c</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>04C2255CC803F0B39CAF0CB3</key>
+			<dict>
+				<key>children</key>
+				<array>
+					<string>6C32DCFC89CB35CCE27339A4</string>
+					<string>8B8547F03CA6278F9C6CACBF</string>
+					<string>43979FE865AC34594D0CE36C</string>
+				</array>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>name</key>
+				<string>src</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>773657160FAC0639289347DB</key>
+			<dict>
+				<key>fileRef</key>
+				<string>6C32DCFC89CB35CCE27339A4</string>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+			</dict>
+			<key>6C32DCFC89CB35CCE27339A4</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.c</string>
+				<key>fileEncoding</key>
+				<string>4</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>FusionAhrs.c</string>
+				<key>path</key>
+				<string>../../../addons/ofxOusterLidar/libs/fusion/src/FusionAhrs.c</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>9E83EF655C107BD298789DF9</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>4</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>FusionOffset.h</string>
+				<key>path</key>
+				<string>../../../addons/ofxOusterLidar/libs/fusion/include/FusionOffset.h</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>31DBEFD490F3DC189A5A6F50</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>4</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>FusionMath.h</string>
+				<key>path</key>
+				<string>../../../addons/ofxOusterLidar/libs/fusion/include/FusionMath.h</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>CFB2BFAC6BF8C0A5671B7E5A</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>4</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>FusionCompass.h</string>
+				<key>path</key>
+				<string>../../../addons/ofxOusterLidar/libs/fusion/include/FusionCompass.h</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>6A405F43BDBE4958FAD14821</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>4</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>FusionCalibration.h</string>
+				<key>path</key>
+				<string>../../../addons/ofxOusterLidar/libs/fusion/include/FusionCalibration.h</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>2C7FDFB6D4ED54105C780082</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>4</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>FusionAxes.h</string>
+				<key>path</key>
+				<string>../../../addons/ofxOusterLidar/libs/fusion/include/FusionAxes.h</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>A91DAD7C644902C1709D0EE8</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>4</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>FusionAhrs.h</string>
+				<key>path</key>
+				<string>../../../addons/ofxOusterLidar/libs/fusion/include/FusionAhrs.h</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>2284B135208CDD9BF8DDB694</key>
+			<dict>
+				<key>children</key>
+				<array>
+					<string>2D87101D584515AD7BD078E3</string>
+					<string>A91DAD7C644902C1709D0EE8</string>
+					<string>2C7FDFB6D4ED54105C780082</string>
+					<string>6A405F43BDBE4958FAD14821</string>
+					<string>CFB2BFAC6BF8C0A5671B7E5A</string>
+					<string>31DBEFD490F3DC189A5A6F50</string>
+					<string>9E83EF655C107BD298789DF9</string>
+				</array>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>name</key>
+				<string>include</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>D00DC37A541A31DDDB704463</key>
+			<dict>
+				<key>children</key>
+				<array>
+					<string>2284B135208CDD9BF8DDB694</string>
+					<string>04C2255CC803F0B39CAF0CB3</string>
+				</array>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>name</key>
+				<string>fusion</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
 			<key>C71058C1B9BCA014E63E8CAF</key>
 			<dict>
 				<key>children</key>
 				<array>
+					<string>D00DC37A541A31DDDB704463</string>
 					<string>EC6D55AE1C1A5F8E9805D4A1</string>
 					<string>123CE64B68449198DCD05D8F</string>
 					<string>052437B0140624EF117EDE51</string>
@@ -2316,7 +2575,7 @@
 				<key>sourceTree</key>
 				<string>&lt;group&gt;</string>
 			</dict>
-			<key>0E7A80BB4DCB8AC6523F8D7C</key>
+			<key>2D87101D584515AD7BD078E3</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.c.h</string>
@@ -2325,9 +2584,9 @@
 				<key>isa</key>
 				<string>PBXFileReference</string>
 				<key>name</key>
-				<string>allocator.h</string>
+				<string>Fusion.h</string>
 				<key>path</key>
-				<string>../../../addons/ofxOusterLidar/libs/jsoncpp/include/json/allocator.h</string>
+				<string>../../../addons/ofxOusterLidar/libs/fusion/include/Fusion.h</string>
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
@@ -3056,6 +3315,7 @@ fi
 						<string>../../../addons/ofxOusterLidar/libs/optional-lite</string>
 						<string>../../../addons/ofxOusterLidar/libs/libtins/include</string>
 						<string>../../../addons/ofxOusterLidar/libs/jsoncpp/include</string>
+						<string>../../../addons/ofxOusterLidar/libs/fusion/include</string>
 					</array>
 					<key>MACOSX_DEPLOYMENT_TARGET</key>
 					<string>10.9</string>
@@ -3107,6 +3367,7 @@ fi
 						<string>../../../addons/ofxOusterLidar/libs/optional-lite</string>
 						<string>../../../addons/ofxOusterLidar/libs/libtins/include</string>
 						<string>../../../addons/ofxOusterLidar/libs/jsoncpp/include</string>
+						<string>../../../addons/ofxOusterLidar/libs/fusion/include</string>
 					</array>
 					<key>INFOPLIST_FILE</key>
 					<string>openFrameworks-Info.plist</string>
@@ -5909,6 +6170,7 @@ fi
 						<string>../../../addons/ofxOusterLidar/libs/optional-lite</string>
 						<string>../../../addons/ofxOusterLidar/libs/libtins/include</string>
 						<string>../../../addons/ofxOusterLidar/libs/jsoncpp/include</string>
+						<string>../../../addons/ofxOusterLidar/libs/fusion/include</string>
 					</array>
 					<key>MACOSX_DEPLOYMENT_TARGET</key>
 					<string>10.9</string>
@@ -5978,6 +6240,7 @@ fi
 						<string>../../../addons/ofxOusterLidar/libs/optional-lite</string>
 						<string>../../../addons/ofxOusterLidar/libs/libtins/include</string>
 						<string>../../../addons/ofxOusterLidar/libs/jsoncpp/include</string>
+						<string>../../../addons/ofxOusterLidar/libs/fusion/include</string>
 					</array>
 					<key>MACOSX_DEPLOYMENT_TARGET</key>
 					<string>10.9</string>
@@ -6017,6 +6280,9 @@ fi
 					<string>837220E80EB56CD44AD27F2A</string>
 					<string>B56FE57CC35806596D38118C</string>
 					<string>1CD33E884D9E3358252E82A1</string>
+					<string>773657160FAC0639289347DB</string>
+					<string>9A5549BBAB138680296AFD39</string>
+					<string>E25C81FCB68814498E3B3E32</string>
 					<string>B7F8BBD427FF73E5D7D9456A</string>
 					<string>88256CD4EDA91B69F68B2451</string>
 					<string>D0114C9A7E092D033C9C8E4A</string>
@@ -6025,6 +6291,7 @@ fi
 					<string>195FB94FF183626EB1D1F157</string>
 					<string>BBFD2BE06489E5842C8AA814</string>
 					<string>EFDD114FA968D21918D223A1</string>
+					<string>8CE0A206C3C4BD5DC043DEF2</string>
 					<string>F8569AAB3B7E84656B1128B4</string>
 				</array>
 				<key>isa</key>
@@ -6133,6 +6400,7 @@ fi
 						<string>../../../addons/ofxOusterLidar/libs/optional-lite</string>
 						<string>../../../addons/ofxOusterLidar/libs/libtins/include</string>
 						<string>../../../addons/ofxOusterLidar/libs/jsoncpp/include</string>
+						<string>../../../addons/ofxOusterLidar/libs/fusion/include</string>
 					</array>
 					<key>INFOPLIST_FILE</key>
 					<string>openFrameworks-Info.plist</string>
@@ -6190,6 +6458,7 @@ fi
 						<string>../../../addons/ofxOusterLidar/libs/optional-lite</string>
 						<string>../../../addons/ofxOusterLidar/libs/libtins/include</string>
 						<string>../../../addons/ofxOusterLidar/libs/jsoncpp/include</string>
+						<string>../../../addons/ofxOusterLidar/libs/fusion/include</string>
 					</array>
 					<key>INFOPLIST_FILE</key>
 					<string>openFrameworks-Info.plist</string>

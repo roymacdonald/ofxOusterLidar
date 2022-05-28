@@ -11,6 +11,8 @@ void ofApp::setup(){
 	gui.add(lidarIp);
 	gui.add(udpDestIp);
 	gui.add(connect);
+
+    gui.add(sphereSize);
     
     if(ofFile::doesFileExist(settings)){
         gui.loadFromFile(settings);
@@ -51,7 +53,7 @@ void ofApp::draw(){
     }
     
     if(bShowLivePoints){
-        lidar.draw(cam);
+        lidar.draw(cam, sphereSize.get());
     
         lidar.drawGui();
     }
