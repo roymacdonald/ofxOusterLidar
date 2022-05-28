@@ -30,8 +30,7 @@ common:
 	# specified here separated by spaces or one per line using +=
 # 	ADDON_INCLUDES = /usr/local/include/eigen3
 	# set the following line to the install location of eigen3
-# 	ADDON_INCLUDES = /usr/local/opt/eigen/include/eigen3
-	ADDON_INCLUDES = /opt/homebrew/opt/eigen/include/eigen3
+	ADDON_INCLUDES = libs/eigen/include
 	ADDON_INCLUDES += libs/ouster/include
 	ADDON_INCLUDES += libs/optional-lite
 	ADDON_INCLUDES += libs/libtins/include
