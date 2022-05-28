@@ -7,8 +7,9 @@
 #include "ouster/lidar_scan.h"
 
 #include "ofxOusterRenderer.hpp"
+#include "ofxOusterIMU.h"
 
-
+#include "Fusion.h"
 
 class ofxOuster: public ofThread {
 public:
@@ -101,7 +102,7 @@ public:
 
     /// Draw the pointcloud and raw image data (if enabled).
     ///  You need to pass a camera to draw . Passing it externally allows you to draw more stuff with that camera
-	void draw(ofEasyCam & cam);
+	void draw(ofEasyCam & cam, float sphereSize);
     
     /// Draws the Gui to set the drawing parameters
 	void drawGui();
@@ -110,8 +111,10 @@ public:
     /// get the pointer to the renderer in case access to it is needed.
     ofxOusterRenderer* getRenderer();
     
-
     
+    
+    ofxOusterIMUFusion imuFusion;
+    glm::vec3 currentPos;
 protected:
 	
 	virtual void threadedFunction() override;
@@ -170,10 +173,24 @@ private:
 	void _initRenderer();
 		
 	ofThreadChannel<ouster::LidarScan> lidarScanChannel;
+    
+    ofThreadChannel<ofxOusterIMUFusion> imuChannel;
 	
+    vector<ofxOusterIMUData> imuFrames;
 	
 	ouster::LidarScan _readScan;
 
     glm::vec2 _guiPos = {10,10};
+    
+    
+    FusionAhrs ahrs;
+    
+    bool updateImuFusion(ofxOusterIMUData & data);
+    uint64_t lastImuTimestamp = 0;
+    
+    
+    
+    
+    
 	
 };

@@ -36,6 +36,7 @@ common:
 	ADDON_INCLUDES += libs/optional-lite
 	ADDON_INCLUDES += libs/libtins/include
 	ADDON_INCLUDES += libs/jsoncpp/include
+	ADDON_INCLUDES += libs/fusion/include
 	ADDON_INCLUDES_EXCLUDE = libs/ouster/include/ouster
 	
 	# any special flag that should be passed to the compiler when using this

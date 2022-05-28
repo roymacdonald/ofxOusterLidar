@@ -129,7 +129,7 @@ void ofxOusterRenderer::render(const ouster::LidarScan& _readScan)
             // we need to destagger ambient because the
             // BeamUniformityCorrector only works on destaggered stuff
             ambient_destaggered = ouster::destagger<double>(ambient, px_offset);
-            ambient_buc.correct(ambient_destaggered);
+            ambient_buc(ambient_destaggered);
             ambient_ae(Eigen::Map<Eigen::ArrayXd>(ambient_destaggered.data(),
                                                   ambient_destaggered.size()));
 

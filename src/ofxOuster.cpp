@@ -1,8 +1,12 @@
 #include "ofxOuster.hpp"
+
+
+
 namespace sensor = ouster::sensor;
 ofxOuster::ofxOuster()
 {
 	_initValues();
+    
 }
 
 ofxOuster::~ofxOuster()
@@ -106,6 +110,10 @@ bool ofxOuster::_initClient()
 			sensorInfo = _sensorInfo;
 			
 		}
+        
+        /// initialize IMU fusion
+        FusionAhrsInitialise(&ahrs);
+        
 		_clientInited = true;
 		return true;
 	}
@@ -165,7 +173,11 @@ void ofxOuster::threadedFunction(){
 						}
 					}
 					if (st & sensor::client_state::IMU_DATA) {
-						sensor::read_imu_packet(*cli, imu_buf.data(), packetFormat);
+                        if(sensor::read_imu_packet(*cli, imu_buf.data(), packetFormat)){
+                            ofxOusterIMUData imu_data(packetFormat, imu_buf);
+                            updateImuFusion(imu_data);
+                            imuChannel.send(imuFusion);
+                        }
 					}
 					if (st & sensor::EXIT) {
 						stopThread();
@@ -200,31 +212,55 @@ void ofxOuster::_initRenderer()
 
 void ofxOuster::_update(ofEventArgs&)
 {
-	if(_clientInited){
-		if(_bisSetup && !_renderer){
-			_initRenderer();
-		}
-		bool bNewData = false;
-		while(lidarScanChannel.tryReceive(_readScan))
-		{
-			bNewData = true;
-			// The lidarScanChannel is an ofThreadChannel which behaves as a safe queue between threads.
-			// We call tryReceive inside a while loop in order to empty the queue and get the newest data, in case that one thread is running significantly slower that the other.
-		}
-		if(bNewData && _renderer)
-		{
-			_renderer->render(_readScan);
-		}
-	}
+    if(_clientInited){
+        if(_bisSetup && !_renderer){
+            _initRenderer();
+        }
+        bool bNewData = false;
+        while(lidarScanChannel.tryReceive(_readScan))
+        {
+            bNewData = true;
+            // The lidarScanChannel is an ofThreadChannel which behaves as a safe queue between threads.
+            // We call tryReceive inside a while loop in order to empty the queue and get the newest data, in case that one thread is running significantly slower that the other.
+        }
+        if(bNewData && _renderer)
+        {
+            _renderer->render(_readScan);
+        }
+        
+        bNewData = false;
+        ofxOusterIMUFusion imuData;
+        while(imuChannel.tryReceive(imuData))
+        {
+            bNewData = true;
+        }
+        if(bNewData)
+        {
+            
+            
+//            imuFrames.push_back(imuData);
+//            cout << imuData;
+            currentPos = imuData.position;
+            
+            
+        }
+    }
 }
 
 
-void ofxOuster::draw(ofEasyCam & cam)
+void ofxOuster::draw(ofEasyCam & cam, float sphereSize)
 {
 	if(_renderer)
 	{
-
+        cam.begin();
+        ofPushStyle();
+        ofSetColor(ofColor::white);
+        ofDrawSphere(currentPos.x, currentPos.y, sphereSize);
+        ofPopStyle();
+        cam.end();
+        ofDrawBitmapStringHighlight(ofToString(currentPos), 10, 20);
 		_renderer->draw(cam);
+        
 	}
 }
 
@@ -310,4 +346,29 @@ ofxOusterRenderer* ofxOuster::getRenderer(){
     }else{
         return nullptr;
     }
+}
+
+
+bool ofxOuster::updateImuFusion(ofxOusterIMUData & data){
+    if(lastImuTimestamp > 0){
+        const FusionVector gyroscope = {data.gyro.x,data.gyro.y,data.gyro.z};
+        const FusionVector accelerometer = {data.accel.x,data.accel.y,data.accel.z};
+        
+        imuFusion.deltaTime = (data.sys_timestamp - lastImuTimestamp)/1000000000.0f;
+        
+        FusionAhrsUpdateNoMagnetometer(&ahrs, gyroscope, accelerometer, imuFusion.deltaTime);//timestamp from IMU is in nanoseconds and Fusion requires it to be in seconds
+        
+            auto fquat = FusionAhrsGetQuaternion(&ahrs);
+        auto feuler = FusionQuaternionToEuler(fquat);
+        auto fearth = FusionAhrsGetEarthAcceleration(&ahrs);
+        imuFusion.quat = *reinterpret_cast<glm::quat*>(&fquat);
+        imuFusion.euler = *reinterpret_cast<glm::vec3*>(&feuler);
+        imuFusion.updatePosition(*reinterpret_cast<glm::vec3*>(&fearth));
+            
+        return true;
+    }
+    lastImuTimestamp = data.sys_timestamp ;
+    
+    
+    return false;
 }
