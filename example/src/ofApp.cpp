@@ -11,8 +11,8 @@ void ofApp::setup(){
 	gui.add(lidarIp);
 	gui.add(udpDestIp);
 	gui.add(connect);
-
-    gui.add(sphereSize);
+    gui.add(openPcap);
+    
     
     if(ofFile::doesFileExist(settings)){
         gui.loadFromFile(settings);
@@ -22,6 +22,12 @@ void ofApp::setup(){
 		lidar.setup(lidarIp.get(), udpDestIp.get());
 		lidar.startThread();
 	}));
+    
+    
+    listeners.push(openPcap.newListener([&](){
+        lidar.load("2022-05-27-20-08-04_OS-1-64-992214000010-1024x10.pcap",
+                   "2022-05-27-20-08-04_OS-1-64-992214000010-1024x10.json");
+    }));
     
     
     lidar.setGuiPosition(gui.getShape().getBottomLeft() + glm::vec2(0, 20));
@@ -43,7 +49,7 @@ void ofApp::exit(){
 void ofApp::draw(){
   ofBackground(0,0,0);
 	
-    if(bShowStoredPoints && lidar.getRenderer()){
+    if(bShowStoredPoints){
         cam.begin();
         ofPushStyle();
         ofSetColor(ofColor::red);
@@ -53,7 +59,7 @@ void ofApp::draw(){
     }
     
     if(bShowLivePoints){
-        lidar.draw(cam, sphereSize.get());
+        lidar.draw(cam);
     
         lidar.drawGui();
     }
