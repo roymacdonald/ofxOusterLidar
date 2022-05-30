@@ -287,19 +287,11 @@ void ofxOuster::_update(ofEventArgs&)
 }
 
 
-void ofxOuster::draw(ofEasyCam & cam, float sphereSize)
+void ofxOuster::draw(ofEasyCam & cam)
 {
 	if(_renderer)
 	{
-        cam.begin();
-        ofPushStyle();
-        ofSetColor(ofColor::white);
-        ofDrawSphere(currentPos.x, currentPos.y, sphereSize);
-        ofPopStyle();
-        cam.end();
-        ofDrawBitmapStringHighlight(ofToString(currentPos), 10, 20);
 		_renderer->draw(cam, node.getGlobalTransformMatrix());
-        
 	}
 }
 

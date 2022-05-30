@@ -106,7 +106,7 @@ public:
 
     /// Draw the pointcloud and raw image data (if enabled).
     ///  You need to pass a camera to draw . Passing it externally allows you to draw more stuff with that camera
-	void draw(ofEasyCam & cam, float sphereSize);
+	void draw(ofEasyCam & cam);
     
     /// Draws the Gui to set the drawing parameters
 	void drawGui();
