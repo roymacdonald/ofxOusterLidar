@@ -6,6 +6,8 @@
 
 #include "ouster/lidar_scan.h"
 
+#include "ouster/os_pcap.h"
+
 #include "ofxOusterRenderer.hpp"
 #include "ofxOusterIMU.h"
 
@@ -72,6 +74,8 @@ public:
 
 	const string& getMetadata() const;
 	
+    void setMetadata(const string& _metadata);
+    
     
 	const ouster::sensor::sensor_info& getSensorInfo() const;
 	
@@ -111,10 +115,18 @@ public:
     /// get the pointer to the renderer in case access to it is needed.
     ofxOusterRenderer* getRenderer();
     
+    /// Loads a .pcap file. that you can either save using this addon or Ouster Studio
+    //
+    void load(const std::string& pcapDataFile, const std::string& jsonConfigFile);
     
+    
+    /// closes a file being read. You only need to call this after reading a file but it will be called automatically in the destructor
+    void closeFile();
     
     ofxOusterIMUFusion imuFusion;
     glm::vec3 currentPos;
+    
+    
 protected:
 	
 	virtual void threadedFunction() override;
@@ -159,7 +171,7 @@ private:
 	void _initValues();
 	
 
-  
+    ofNode node;
 
 	
 	
@@ -188,9 +200,11 @@ private:
     bool updateImuFusion(ofxOusterIMUData & data);
     uint64_t lastImuTimestamp = 0;
     
+    std::shared_ptr<ouster::sensor_utils::playback_handle> playbackHandle = nullptr;
     
+    void _ingestLidarData(ouster::ScanBatcher& scanBatcher, std::vector<uint8_t>& buffer , ouster::LidarScan& scan);
     
-    
+    void _ingestImuData(ouster::sensor::packet_format & pf,  std::vector<uint8_t>& buffer);
     
 	
 };

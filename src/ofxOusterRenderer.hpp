@@ -387,7 +387,7 @@ public:
 
 	void render(const ouster::LidarScan& _readScan);
 
-	void draw(ofEasyCam &cam);
+	void draw(ofEasyCam &cam, const glm::mat4& transform);
 
 	void drawGui();
 

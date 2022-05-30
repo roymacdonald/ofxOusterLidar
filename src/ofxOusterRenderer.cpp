@@ -222,11 +222,14 @@ size_t ofxOusterRenderer::getWidth() const
 }
 
 
-void ofxOusterRenderer::draw(ofEasyCam &cam)
+void ofxOusterRenderer::draw(ofEasyCam &cam, const glm::mat4& transform)
 {
 	if(cloud){
 		cam.begin();
+        ofPushMatrix();
+        ofMultMatrix(transform);
 		cloud->draw(range_scale.get(), range_max.get(), colorMap);
+        ofPopMatrix();
 		cam.end();
 	}else
 	{
