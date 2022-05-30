@@ -84,6 +84,13 @@ linuxarmv7l:
 android/armeabi:	
 android/armeabi-v7a:	
 osx:
-	ADDON_LIBS = libs/libtins/lib/libtins.4.4.dylib
-	ADDON_LIBS += libs/jsoncpp/lib/libjsoncpp.25.dylib
+# uncomment the following for mac intel processors
+	ADDON_LIBS = libs/libtins/lib/intel/libtins.4.4.dylib
+	ADDON_LIBS += libs/jsoncpp/lib/intel/libjsoncpp.25.dylib
+
+
+# uncomment the following for mac M1 processors
+# 	ADDON_LIBS = libs/libtins/lib/arm/libtins.4.4.dylib
+# 	ADDON_LIBS += libs/jsoncpp/lib/arm/libjsoncpp.25.dylib
+
 ios:
