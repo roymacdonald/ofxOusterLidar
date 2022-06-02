@@ -3,42 +3,38 @@ openFrameworks addon to use the ouster lidars.
 
 ## Install
 
-Make sure you have installed Eigen before trying to compiling. 
-The easiest way is to use [Homebrew](https://brew.sh/).
-
-If Eigen is not installed use the following command.
-```
-brew install eigen
-```
-Find the install location for brew.
-```
-brew --prefix eigen
-```
-In my case it prints 
-```
-/usr/local/opt/eigen
-```
-Open the `addon_config.mk file and change the following line so it correctly reflects the route to Eigen.
-It should have the following format.
+You need to install two additional libraries for this addon to work. 
+The easiest way is to use [HomeBrew](https://brew.sh/).
+Once installed run the following commands in your termial:
 
 ```
-ADDON_INCLUDES = [what brew --prefix eigen prints]/include/eigen3
-```
-Thus look something like
-```
-ADDON_INCLUDES = /usr/local/opt/eigen/include/eigen3
+brew install libtins
+brew install jsoncpp
 ```
 
-Double check that the path actually exists
+open the addon_confing.mk file, scroll down to the bottom
+and comment/uncomment the following lines acording to your computer's architechture
 
-### Dependencies
+```
+# uncomment the following for mac intel processors
+	ADDON_LIBS = libs/libtins/lib/intel/libtins.4.4.dylib
+	ADDON_LIBS += libs/jsoncpp/lib/intel/libjsoncpp.25.dylib
+
+
+# uncomment the following for mac M1 processors
+# 	ADDON_LIBS = libs/libtins/lib/arm/libtins.4.4.dylib
+# 	ADDON_LIBS += libs/jsoncpp/lib/arm/libjsoncpp.25.dylib
+
+```
+
+## Dependencies
 You will need the following addons
 
 * [ofxDropdown](https://github.com/roymacdonald/ofxDropdown/)
 
 Make sure you have it updated
 
-### Running example
+## Running example
 
 Before running the example make sure you update it with Project Generator.
 Just drag the example folder into the Project Generator window and hit Update.
@@ -62,7 +58,7 @@ In order to connect the lidar directly to your computer you need to manually set
 
 Once this is set just press connect and wait a few seconds and the point cloud will show up.
 
-#### TIP:
+## TIP:
 Change the IP addresses in the ofApp.h file so you dont need to set these each time you run the app.
 
 
