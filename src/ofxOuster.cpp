@@ -427,7 +427,7 @@ bool ofxOuster::updateImuFusion(ofxOusterIMUData & data){
 //        cout<< "linear: " << linear.axis.x << ", "<< linear.axis.y << ", "<< linear.axis.z << endl;
         
 //        node.setPosition(imuFusion.position);//.x, imuFusion.position.y, 0.0f);
-        node.setOrientation(imuFusion.quat);
+        // node.setOrientation(imuFusion.quat);
 //        node.setOrientation(imuFusion.euler);
         
         return true;
