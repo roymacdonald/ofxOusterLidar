@@ -106,7 +106,11 @@ public:
 
     /// Draw the pointcloud and raw image data (if enabled).
     ///  You need to pass a camera to draw . Passing it externally allows you to draw more stuff with that camera
-	void draw(ofEasyCam & cam);
+    void draw(ofEasyCam & cam);
+    
+    /// Draw only the point cloud mesh.
+    void drawPointCloud();
+    
     
     /// Draws the Gui to set the drawing parameters
 	void drawGui();
@@ -127,6 +131,10 @@ public:
     glm::vec3 currentPos;
     
     
+    ofEvent<void> lidarDataEvent;
+        
+    
+
 protected:
 	
 	virtual void threadedFunction() override;
@@ -171,7 +179,6 @@ private:
 	void _initValues();
 	
 
-    ofNode node;
 
 	
 	

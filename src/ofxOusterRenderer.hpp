@@ -349,45 +349,37 @@ public:
 
 
 
-	ofFloatImage image;
-	ofFloatImage noiseImage;
-
-
-
-	enum CloudDisplayMode {
-        MODE_RANGE = 0,
-        MODE_INTENSITY = 1,
-        MODE_AMBIENT = 2,
-        MODE_REFLECTIVITY = 3,
-        NUM_MODES = 4
-    };
+//	ofFloatImage image;
+//	ofFloatImage noiseImage;
+//	
 
 	ofxPanel gui;
 
 
 	ofParameter<float> point_size = {"Point Size", 3, 1, 10};
-	ofParameter<float> range_scale = {"range_scale", 1, 0, 1};
+
 	ofParameter<float> range_max = {"range_max", 0.5, 0, 1};
-	ofParameter<bool> show_noise = {"Show Noise", false};
-	ofParameter<int> display_mode = {"Display Mode", (int)MODE_RANGE, 0, (int) NUM_MODES -1};
-	ofParameter<bool> cycle_range = {"Cycle Range", false};
+
+//	ofParameter<int> display_mode = {"Display Mode", (int)MODE_RANGE, 0, (int) NUM_MODES -1};
+	
 	ofParameter<bool> show_image = {"Show Image", false};
-	ofParameter<bool> show_ambient = {"Show Ambient", false};
-	ofParameter<int> color_map_mode = {"Color Map Mode", 0, 0, (int)COLORMAP_NUM -1};
+	
+//	ofParameter<int> color_map_mode = {"Color Map Mode", 0, 0, 7};
 	
 
 //    ofxButton saveCloud;
 
-
-    template <class T>
-	void setCloud(T* xyz, T* off, const size_t n, const size_t w, const std::array<double, 16>& extrinsic)
-	{
-		cloud = make_unique<Cloud>(xyz, off, n, w, extrinsic);
-	}
+//
+//    template <class T>
+//	void setCloud(T* xyz, T* off, const size_t n, const size_t w, const std::array<double, 16>& extrinsic)
+//	{
+//		cloud = make_unique<Cloud>(xyz, off, n, w, extrinsic);
+//	}
 
 	void render(const ouster::LidarScan& _readScan);
 
-	void draw(ofEasyCam &cam, const glm::mat4& transform);
+    void drawPointCloud();
+    void draw(ofEasyCam &cam);//, const glm::mat4& transform);
 
 	void drawGui();
 
@@ -399,7 +391,7 @@ public:
 	
     void setGuiPosition(const glm::vec2& pos);
     
-	ofxOusterColorMap colorMap;
+//	ofxOusterColorMap colorMap;
 	
     
     /// returns the collections of points that make the point cloud.
@@ -407,21 +399,21 @@ public:
     /// which means that the (0,0,0) is at the center of the lidar.
     const vector<glm::vec3>& getPointCloud();
     
-    
+    ofVboMesh points;
     
 private:
 
 
-	 ouster::viz::AutoExposure range_ae;
-	 ouster::viz::AutoExposure intensity_ae;
-	 ouster::viz::AutoExposure ambient_ae;
-	 ouster::viz::AutoExposure reflectivity_ae;
-	 ouster::viz::BeamUniformityCorrector ambient_buc;
+//	 ouster::viz::AutoExposure range_ae;
+//	 ouster::viz::AutoExposure intensity_ae;
+//	 ouster::viz::AutoExposure ambient_ae;
+//	 ouster::viz::AutoExposure reflectivity_ae;
+//	 ouster::viz::BeamUniformityCorrector ambient_buc;
 
 
-	const std::vector<int> px_offset;
+//	const std::vector<int> px_offset;
 
-	const double aspect_ratio;
+//	const double aspect_ratio;
     const size_t h, w;
 
 
@@ -433,16 +425,24 @@ private:
 
 	ofEventListeners listeners;
 
-	void _cycleRangeChanged(bool&);
-	void _displayModeChanged(int&);
+//	void _cycleRangeChanged(bool&);
+//	void _displayModeChanged(int&);
 
-	std::unique_ptr<Cloud> cloud = nullptr;
+//	std::unique_ptr<Cloud> cloud = nullptr;
 
 	void _setupParameters();
 
 //    ofEasyCam cam;
 
-    vector<glm::vec3> pointCloud;
+//    vector<glm::vec3> pointCloud;
+
+    ouster::XYZLut lut;
+    
+    
+    
+    
+    void makeLut(const ouster::sensor::sensor_info & info);
+    
     
 };
 

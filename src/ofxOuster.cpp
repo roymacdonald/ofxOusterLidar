@@ -157,12 +157,12 @@ void ofxOuster::threadedFunction(){
                 uint64_t startTimeMicros = 0;
 				while (isThreadRunning()) {
                     if(playbackHandle != nullptr){
-//                        cout <<",xmjxsjm\n";
+
                         ouster::sensor_utils::packet_info packet_info;
                         
                         if (ouster::sensor_utils::next_packet_info(*playbackHandle, packet_info)) {
                             auto micros = ofGetElapsedTimeMicros();
-//                            cout << (packet_info.timestamp.count() - lasttimestamp) << "  " << (micros - startTimeMicros)<< endl;
+
                             startTimeMicros = micros;
                             if(lasttimestamp != 0){
                                 
@@ -171,27 +171,30 @@ void ofxOuster::threadedFunction(){
                             }else{
                                 startTimeMicros = ofGetElapsedTimeMicros();
                             }
+                            
                             if(packet_info.dst_port == sensorInfo.udp_port_lidar) {
                                 auto packet_size = ouster::sensor_utils::read_packet(*playbackHandle, lidar_buf.data(), packetFormat.lidar_packet_size);
                                 if (packet_size == packetFormat.lidar_packet_size){
                                     _ingestLidarData(_batchScan, lidar_buf,ls_write);
                                 }else{
-                                    cout << "wrong lidar packet size. expecting: " << packetFormat.lidar_packet_size << "  received: " << packet_size << endl;
+                                    ofLogWarning("ofxOuster::threadedFunction reading PCAP file") << "wrong lidar packet size. expecting: " << packetFormat.lidar_packet_size << "  received: " << packet_size;
                                 }
                             }else if(packet_info.dst_port == sensorInfo.udp_port_imu) {
                                 auto packet_size = ouster::sensor_utils::read_packet(*playbackHandle, imu_buf.data(), packetFormat.imu_packet_size);
                                 if (packet_size == packetFormat.imu_packet_size){
                                     _ingestImuData(packetFormat, imu_buf);
                                 }else{
-                                    cout << "wrong imu packet size. expecting: " << packetFormat.lidar_packet_size << "  received: " << packet_size << endl;
+                                    ofLogWarning("ofxOuster::threadedFunction reading PCAP file") << "wrong imu packet size. expecting: " << packetFormat.lidar_packet_size << "  received: " << packet_size ;
                                 }
                             }else{
-                                cout << "unknown dest port " << packet_info.dst_port << " lidar port: " << sensorInfo.udp_port_lidar << " imu port: " << sensorInfo.udp_port_imu << endl;
+                                 ofLogWarning("ofxOuster::threadedFunction reading PCAP file") << "unknown dest port " << packet_info.dst_port << " lidar port: " << sensorInfo.udp_port_lidar << " imu port: " << sensorInfo.udp_port_imu ;
                             }
                             
                             lasttimestamp = packet_info.timestamp.count();
                         }else{
-                            cout << "No more packets\n";
+                             ofLogNotice("ofxOuster::threadedFunction") << "No more packets\n";
+                            stopThread();
+                            break;
                         }
                         
                     }else{
@@ -237,13 +240,13 @@ void ofxOuster::_initRenderer()
 		
 		_renderer = make_unique<ofxOusterRenderer>(sensorInfo, "Renderer");
 		
-		auto xyz_lut = make_unique<ouster::XYZLut>(ouster::make_xyz_lut(sensorInfo));
-		_renderer->setCloud(
-							xyz_lut->direction.data(),
-							xyz_lut->offset.data(),
-							H * W,
-							W,
-							{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1});
+//		auto xyz_lut = make_unique<ouster::XYZLut>(ouster::make_xyz_lut(sensorInfo));
+//		_renderer->setCloud(
+//							xyz_lut->direction.data(),
+//							xyz_lut->offset.data(),
+//							H * W,
+//							W,
+//							{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1});
         
         _renderer->setGuiPosition(_guiPos);
 	}
@@ -265,6 +268,7 @@ void ofxOuster::_update(ofEventArgs&)
         if(bNewData && _renderer)
         {
             _renderer->render(_readScan);
+            ofNotifyEvent(lidarDataEvent, this);
         }
         
         bNewData = false;
@@ -286,12 +290,21 @@ void ofxOuster::_update(ofEventArgs&)
     }
 }
 
+void ofxOuster::drawPointCloud()
+{
+    if(_renderer)
+    {
+        _renderer->drawPointCloud();
+    }
+}
+
+
 
 void ofxOuster::draw(ofEasyCam & cam)
 {
 	if(_renderer)
 	{
-		_renderer->draw(cam, node.getGlobalTransformMatrix());
+        _renderer->draw(cam);//, node.getGlobalTransformMatrix());
 	}
 }
 
