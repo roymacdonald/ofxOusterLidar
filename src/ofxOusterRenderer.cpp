@@ -79,7 +79,8 @@ w(info.format.columns_per_frame)
 
 void ofxOusterRenderer::makeLut(const ouster::sensor::sensor_info & info){
 
-    glm::quat q(glm::radians(glm::vec3(-90.0, -90.0, 0)));
+    glm::quat q(glm::radians(glm::vec3(-90.0, 90.0, 0)));
+    
 
     
     /// the default coordinates space is rotated, in relationship to OF's.
