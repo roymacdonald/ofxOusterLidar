@@ -19,18 +19,23 @@ void ofApp::setup(){
     }
 	
 	listeners.push(connect.newListener([&](){
-		lidar.setup(lidarIp.get(), udpDestIp.get());
-		lidar.startThread();
+		lidar.connect(lidarIp.get(), udpDestIp.get());
 	}));
     
     
     listeners.push(openPcap.newListener([&](){
-        lidar.load("2022-05-27-20-08-04_OS-1-64-992214000010-1024x10.pcap",
-                   "2022-05-27-20-08-04_OS-1-64-992214000010-1024x10.json");
+        string dir = "/Users/roy/Desktop/OusterPCAP/";
+        lidar.load(dir+ "2022-05-27-20-08-04_OS-1-64-992214000010-1024x10.pcap",
+                   dir+ "2022-05-27-20-08-04_OS-1-64-992214000010-1024x10.json");
     }));
     
     
     lidar.setGuiPosition(gui.getShape().getBottomLeft() + glm::vec2(0, 20));
+    
+    cam.setFarClip(100000);
+    cam.setNearClip(0);
+    cam.setRelativeYAxis(!cam.getRelativeYAxis());
+    
     
 }
 

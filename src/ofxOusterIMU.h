@@ -21,6 +21,10 @@ public:
     ofxOusterIMUData(){}
     
     ofxOusterIMUData(ouster::sensor::packet_format& format, std::vector<uint8_t>& buffer){
+        set(format, buffer);
+    }
+    
+    void set(ouster::sensor::packet_format& format, std::vector<uint8_t>& buffer){
         auto * buff = buffer.data();
         sys_timestamp = format.imu_sys_ts(buff);
         accel_timestamp = format.imu_accel_ts(buff);

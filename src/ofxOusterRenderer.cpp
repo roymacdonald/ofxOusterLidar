@@ -110,12 +110,6 @@ void ofxOusterRenderer::makeLut(const ouster::sensor::sensor_info & info){
 
 
 
-
-
-void printRowsCols(ouster::img_t<double> & i, const std::string & name){
-	std::cout << name << " : rows: " << i.rows() << "  cols: " << i.cols() << std::endl;
-}
-
 void ofxOusterRenderer::render(const ouster::LidarScan& _readScan)
 {
 
