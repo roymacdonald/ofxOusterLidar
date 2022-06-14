@@ -68,6 +68,11 @@ public:
     
     const ouster::sensor::sensor_info& getSensorInfo() {return sensorInfo;}
     
+    uint64_t timestampDiff = 0;
+    uint64_t updatesDiff = 0;
+    uint64_t lastLidarData = 0;
+    uint64_t lidarDataDiff = 0;
+    uint64_t frameCount = 0;
 protected:
 
     std::string _dataFile = "";
@@ -87,4 +92,6 @@ protected:
 
     bool bIsPlaying = false;
     ouster::sensor::sensor_info sensorInfo;
+    
+    ouster::sensor_utils::packet_info packet_info;
 };

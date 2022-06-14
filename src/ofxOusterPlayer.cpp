@@ -40,7 +40,7 @@ bool ofxOusterPlayer::load(const std::string& dataFile, const std::string& confi
     ofLogVerbose("ofxOusterPlayer") << sensorInfo.prod_line << " sn: " << sensorInfo.sn << " firmware rev: " << sensorInfo.fw_rev ;
     
     lasttimestamp = 0;
-    
+    frameCount = 0;
 
     if(sensorInfo.udp_port_lidar  == 0){
         sensorInfo.udp_port_lidar = 7502;
@@ -92,6 +92,7 @@ void ofxOusterPlayer::closeFile(){
     if(playbackHandle != nullptr){
         ouster::sensor_utils::replay_uninitialize(*playbackHandle);
         lasttimestamp = 0;
+        frameCount = 0;
         pause();
         playbackHandle = nullptr;
     }
@@ -109,7 +110,7 @@ void ofxOusterPlayer::_update(ofEventArgs&){
 PlaybackDataType ofxOusterPlayer::getNextScan(){
     if(playbackHandle != nullptr){
         
-        ouster::sensor_utils::packet_info packet_info;
+        
         auto packetFormat = ouster::sensor::get_format(sensorInfo);
         
         while   (ouster::sensor_utils::next_packet_info(*playbackHandle,  packet_info)) {
@@ -117,8 +118,8 @@ PlaybackDataType ofxOusterPlayer::getNextScan(){
             if(bRunRealtime){
 //                startTimeMicros = micros;
                 if(lasttimestamp != 0 ){
-                    auto timestampDiff = packet_info.timestamp.count() - lasttimestamp;
-                    auto updatesDiff = micros - lastUpdateMicros;
+                    timestampDiff = packet_info.timestamp.count() - lasttimestamp;
+                    updatesDiff = micros - lastUpdateMicros;
                     bool bNeedsSleep = true;
                     if(updatesDiff >= timestampDiff){
                         bNeedsSleep = false;
@@ -127,15 +128,21 @@ PlaybackDataType ofxOusterPlayer::getNextScan(){
                         ofSleepMillis(floor((timestampDiff - updatesDiff)/1000.0f));
                     }
                     
-                }else{
-                    
-                    lastUpdateMicros = ofGetElapsedTimeMicros();
+//                }else{
+//                    playbackFps = updatesDiff
+                   
                 }
+                lastUpdateMicros = micros;//ofGetElapsedTimeMicros();
+                lasttimestamp = packet_info.timestamp.count();
             }
             if(packet_info.dst_port == sensorInfo.udp_port_lidar) {
                 auto packet_size = ouster::sensor_utils::read_packet(*playbackHandle, lidar_buf.data(), packetFormat.lidar_packet_size);
                 if (packet_size == packetFormat.lidar_packet_size){
                     if ((*_batchScan)(lidar_buf.data(), ls_write)) {
+                        auto micros = ofGetElapsedTimeMicros();
+                        lidarDataDiff = micros -lastLidarData;
+                        lastLidarData = micros;
+                        frameCount ++;
                         ofNotifyEvent(lidarDataEvent, ls_write,this);
                         return PlaybackDataType::LIDAR;
                     }
@@ -155,7 +162,7 @@ PlaybackDataType ofxOusterPlayer::getNextScan(){
                 ofLogWarning("ofxOusterPlayer::getNextScan") <<  " reading PCAP file. Unknown dest port " << packet_info.dst_port << " lidar port: " << sensorInfo.udp_port_lidar << " imu port: " << sensorInfo.udp_port_imu ;
             }
             
-            lasttimestamp = packet_info.timestamp.count();
+            
         }
         
         ofLogNotice("ofxOusterPlayer::getNextScan") << "No more packets\n";
