@@ -111,5 +111,6 @@ private:
     glm::vec2 _guiPos = {10,10};
     unique_ptr<ofxOusterClient> _client = nullptr;
     unique_ptr<ofxOusterPlayer> _player = nullptr;
-	
+    
+    ouster::sensor::sensor_info dummyInfo;
 };

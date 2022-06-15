@@ -103,20 +103,20 @@ void ofxOuster::draw(ofEasyCam & cam)
 	{
         _renderer->draw(cam);
 	}
-    if(_player){
-        stringstream ss;
-        ss << "timestampDiff: " << _player->timestampDiff << "\n";
-        ss << "updatesDiff: " << _player->updatesDiff << "\n";
-        ss << "FPS: " << (1000000.0/(float)_player->updatesDiff)<< "\n";
-        
-        
-        ss << "lidarDataDiff: " << _player->lidarDataDiff << "\n";
-        ss <<"fps: " << (1000000.0/(float)_player->lidarDataDiff) << "\n";
-        ss << "FrameCount: " << _player->frameCount << "\n";
-        
-        ofDrawBitmapStringHighlight(ss.str(), ofGetWidth()/2, 30);
-        
-    }
+//    if(_player){
+//        stringstream ss;
+//        ss << "timestampDiff: " << _player->timestampDiff << "\n";
+//        ss << "updatesDiff: " << _player->updatesDiff << "\n";
+//        ss << "FPS: " << (1000000.0/(float)_player->updatesDiff)<< "\n";
+//
+//
+//        ss << "lidarDataDiff: " << _player->lidarDataDiff << "\n";
+//        ss <<"fps: " << (1000000.0/(float)_player->lidarDataDiff) << "\n";
+//        ss << "FrameCount: " << _player->frameCount << "\n";
+//
+//        ofDrawBitmapStringHighlight(ss.str(), ofGetWidth()/2, 30);
+//
+//    }
 }
 
 
@@ -221,4 +221,14 @@ void ofxOuster::onLidarData(ouster::LidarScan& scan){
 }
 void ofxOuster::onImuData(ofxOusterIMUData& data){
     ofNotifyEvent(imuDataEvent, data, this);
+}
+const ouster::sensor::sensor_info& ofxOuster::getSensorInfo() const{
+    if(_client){
+        return _client->getSensorInfo();
+    }else if(_player){
+        return _player->getSensorInfo();
+    }
+    
+    ofLogError("ofxOuster::getSensorInfo()") << "cant get sensor info it there is no client or player";
+    return dummyInfo;
 }
