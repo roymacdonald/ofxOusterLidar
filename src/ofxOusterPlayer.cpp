@@ -101,7 +101,7 @@ void ofxOusterPlayer::closeFile(){
 
 void ofxOusterPlayer::_update(ofEventArgs&){
     auto d = getNextScan();
-    if(d == PlaybackDataType::NONE){
+    if(d == PlaybackDataType::PLAYBACK_NONE){
         pause();
     }
 }
@@ -144,7 +144,7 @@ PlaybackDataType ofxOusterPlayer::getNextScan(){
                         lastLidarData = micros;
                         frameCount ++;
                         ofNotifyEvent(lidarDataEvent, ls_write,this);
-                        return PlaybackDataType::LIDAR;
+                        return PlaybackDataType::PLAYBACK_LIDAR;
                     }
                 }else{
                     ofLogWarning("ofxOusterPlayer::getNextScan") << " reading PCAP file. Wrong lidar packet size. expecting: " << packetFormat.lidar_packet_size << "  received: " << packet_size;
@@ -154,7 +154,7 @@ PlaybackDataType ofxOusterPlayer::getNextScan(){
                 if (packet_size == packetFormat.imu_packet_size){
                     imuData.set(packetFormat, imu_buf);
                     ofNotifyEvent(imuDataEvent, imuData, this);
-                    return PlaybackDataType::IMU;
+                    return PlaybackDataType::PLAYBACK_IMU;
                 }else{
                     ofLogWarning("ofxOusterPlayer::getNextScan") << " reading PCAP file. wrong imu packet size. expecting: " << packetFormat.lidar_packet_size << "  received: " << packet_size ;
                 }
@@ -167,11 +167,12 @@ PlaybackDataType ofxOusterPlayer::getNextScan(){
         
         ofLogNotice("ofxOusterPlayer::getNextScan") << "No more packets\n";
         
-        return PlaybackDataType::NONE;
+        return PlaybackDataType::PLAYBACK_NONE;
         
-    }else{
+//    }else{
         
     }
+    return PlaybackDataType::PLAYBACK_NONE;
 }
 
 

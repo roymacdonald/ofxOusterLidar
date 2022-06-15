@@ -19,9 +19,9 @@
 #include "ofxOusterIMU.h"
 
 enum PlaybackDataType{
-    NONE = 0,
-    LIDAR = 1,
-    IMU = 2
+    PLAYBACK_NONE = 0,
+    PLAYBACK_LIDAR = 1,
+    PLAYBACK_IMU = 2
 };
 class ofxOusterPlayer{
 public:
