@@ -29,7 +29,7 @@ public:
     ~ofxOusterPlayer();
     /// Loads a .pcap file. that you can either save using this addon or Ouster Studio
         //
-        bool load(const std::string& pcapDataFile, const std::string& jsonConfigFile);
+        bool load(const std::string& pcapDataFile, const std::string& jsonConfigFile, uint16_t lidar_port, uint16_t imu_port);
         
         
         /// closes a file being read. You only need to call this after reading a file but it will be called automatically in the destructor

@@ -13,7 +13,7 @@ ofxOusterPlayer::~ofxOusterPlayer(){
 }
 
 
-bool ofxOusterPlayer::load(const std::string& dataFile, const std::string& configFile){
+bool ofxOusterPlayer::load(const std::string& dataFile, const std::string& configFile, uint16_t lidar_port, uint16_t imu_port){
     if(dataFile.empty() || configFile.empty()){
         ofLogError("ofxOusterPlayer") << "Can't load. One of the filenames is empty";
         return false;
@@ -42,12 +42,12 @@ bool ofxOusterPlayer::load(const std::string& dataFile, const std::string& confi
     lasttimestamp = 0;
     frameCount = 0;
 
-    if(sensorInfo.udp_port_lidar  == 0){
-        sensorInfo.udp_port_lidar = 7502;
+    if(sensorInfo.udp_port_lidar  == 0 || lidar_port != 7502){
+        sensorInfo.udp_port_lidar = lidar_port;
         ofLogVerbose("ofxOusterPlayer::load") << "using default lidar port ";
     }
-    if(sensorInfo.udp_port_imu  == 0){
-        sensorInfo.udp_port_imu = 7503;
+    if(sensorInfo.udp_port_imu  == 0 || imu_port != 7503){
+        sensorInfo.udp_port_imu = imu_port;
         ofLogVerbose("ofxOusterPlayer::load") << "using default imu port ";
     }
     
@@ -81,7 +81,7 @@ void ofxOusterPlayer::pause(){
 void ofxOusterPlayer::stop(){
     pause();
     closeFile();
-    load(_dataFile, _configFile);
+    load(_dataFile, _configFile, sensorInfo.udp_port_lidar, sensorInfo.udp_port_imu);
 }
 void ofxOusterPlayer::nextFrame(){
     if(!bIsPlaying){
@@ -135,6 +135,7 @@ PlaybackDataType ofxOusterPlayer::getNextScan(){
                 lastUpdateMicros = micros;//ofGetElapsedTimeMicros();
                 lasttimestamp = packet_info.timestamp.count();
             }
+//            if(packet_info.dst_port == 47691){//sensorInfo.udp_port_lidar) {
             if(packet_info.dst_port == sensorInfo.udp_port_lidar) {
                 auto packet_size = ouster::sensor_utils::read_packet(*playbackHandle, lidar_buf.data(), packetFormat.lidar_packet_size);
                 if (packet_size == packetFormat.lidar_packet_size){
@@ -149,6 +150,7 @@ PlaybackDataType ofxOusterPlayer::getNextScan(){
                 }else{
                     ofLogWarning("ofxOusterPlayer::getNextScan") << " reading PCAP file. Wrong lidar packet size. expecting: " << packetFormat.lidar_packet_size << "  received: " << packet_size;
                 }
+            }else if(packet_info.dst_port == 37873){//sensorInfo.udp_port_imu) {
             }else if(packet_info.dst_port == sensorInfo.udp_port_imu) {
                 auto packet_size = ouster::sensor_utils::read_packet(*playbackHandle, imu_buf.data(), packetFormat.imu_packet_size);
                 if (packet_size == packetFormat.imu_packet_size){

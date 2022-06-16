@@ -192,14 +192,14 @@ ofxOusterRenderer* ofxOuster::getRenderer(){
 
 
 
-void ofxOuster::load(const std::string& dataFile, const std::string& configFile){
+void ofxOuster::load(const std::string& dataFile, const std::string& configFile, uint16_t lidar_port, uint16_t imu_port){
     
     closeFile();
     if(!_player){
         _player = make_unique<ofxOusterPlayer>();
     }
     
-    if(_player->load(dataFile, configFile)){
+    if(_player->load(dataFile, configFile, lidar_port, imu_port)){
         _listeners.push(_player->lidarDataEvent.newListener(this, &ofxOuster::onLidarData));
         _listeners.push(_player->imuDataEvent.newListener(this, &ofxOuster::onImuData));
         _player->play();

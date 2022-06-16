@@ -47,8 +47,14 @@ public:
      * Loads a .pcap file. that you can either save using this addon or Ouster Studio
      * @param pcapDataFile file path to the PCAP data file
      * @param jsonConfigFile file path to the associated JSON configuration file
+     * @param lidar_port (optional) Network port through which the lidar data was being recorded
+     * @param imu_port (optional) Network port through which the IMU data was being recorded
+     * Even when this functions load an already recorded file, such file is actually a raw network stream saved to disk.
+     * So, in order to decode the data properly the network ports through which data came through is needed.
+     * Specifying the network ports is optional, and most probably useful when reading a file that was recorded on ports other than the default or the jsonConfig file does not include such information
+     *
      */
-    void load(const std::string& pcapDataFile, const std::string& jsonConfigFile);
+    void load(const std::string& pcapDataFile, const std::string& jsonConfigFile, uint16_t lidar_port = 7502, uint16_t imu_port = 7503);
     
     
     /// closes a file being read. You only need to call this after reading a file but it will be called automatically in the destructor
@@ -102,8 +108,10 @@ private:
     
 	void _update(ofEventArgs&);
 	
+public:
 	ouster::LidarScan _readScan;
-    
+
+private:
 	void _initRenderer();
 		
     ofxOusterIMUData imuData;
