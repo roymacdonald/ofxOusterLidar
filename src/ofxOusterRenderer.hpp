@@ -81,6 +81,9 @@ public:
     
     ofVboMesh points;
     
+    const ouster::XYZLut& getLut(){return lut;}
+    
+    
 private:
 
         void loadShader();
