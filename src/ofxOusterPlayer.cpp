@@ -135,7 +135,6 @@ PlaybackDataType ofxOusterPlayer::getNextScan(){
                 lastUpdateMicros = micros;//ofGetElapsedTimeMicros();
                 lasttimestamp = packet_info.timestamp.count();
             }
-//            if(packet_info.dst_port == 47691){//sensorInfo.udp_port_lidar) {
             if(packet_info.dst_port == sensorInfo.udp_port_lidar) {
                 auto packet_size = ouster::sensor_utils::read_packet(*playbackHandle, lidar_buf.data(), packetFormat.lidar_packet_size);
                 if (packet_size == packetFormat.lidar_packet_size){
@@ -150,7 +149,6 @@ PlaybackDataType ofxOusterPlayer::getNextScan(){
                 }else{
                     ofLogWarning("ofxOusterPlayer::getNextScan") << " reading PCAP file. Wrong lidar packet size. expecting: " << packetFormat.lidar_packet_size << "  received: " << packet_size;
                 }
-            }else if(packet_info.dst_port == 37873){//sensorInfo.udp_port_imu) {
             }else if(packet_info.dst_port == sensorInfo.udp_port_imu) {
                 auto packet_size = ouster::sensor_utils::read_packet(*playbackHandle, imu_buf.data(), packetFormat.imu_packet_size);
                 if (packet_size == packetFormat.imu_packet_size){
