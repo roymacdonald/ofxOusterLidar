@@ -45,6 +45,7 @@ public:
     
     const ouster::XYZLut& getLut(){return lut;}
     
+    
 private:
 
 
