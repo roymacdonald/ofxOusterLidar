@@ -24,12 +24,12 @@ class ofxOusterColorMap;
 class ofxColorMapGui: public ofxBaseGui {
 public:
     ofxColorMapGui(){}
-    ofxColorMapGui(ofParameter<int> _param, ofxOusterColorMap* colorMap, float width = defaultWidth, float height = defaultHeight);
+    ofxColorMapGui(ofxGuiGroup* gui, string name, ofxOusterColorMap* colorMap);
 
     virtual ~ofxColorMapGui(){
     }
 
-    ofxColorMapGui * setup(ofParameter<int> param,ofxOusterColorMap* colorMap, float width = defaultWidth, float height = defaultHeight);
+    void setup(ofxGuiGroup* gui,  string name, ofxOusterColorMap* colorMap);
     
     // Abstract methods we must implement, but have no need for!
     virtual bool mouseMoved(ofMouseEventArgs & args){return false;}
@@ -38,12 +38,15 @@ public:
     virtual bool mouseReleased(ofMouseEventArgs & args){return false;}
     virtual bool mouseScrolled(ofMouseEventArgs & args){return false;}
 
-    
-    ofAbstractParameter & getParameter(){return _param;}
 
-protected:
+    ofAbstractParameter & getParameter(){return void_param;}
+
+    unique_ptr<ofxIntDropdown> colorMapDropdown = nullptr;
     
-    ofParameter<int> _param;
+protected:
+    ofParameter<void> void_param = {"void_param"};
+    ofParameter<int> color_map_mode  = {"Color Map Mode", 0, 0, 7};
+    
     void generateDraw(){
     }
 
@@ -55,13 +58,18 @@ protected:
     
     ofxOusterColorMap* _colorMap = nullptr;
     
+private:
+    ofEventListeners listeners;
+    
+
+  
 };
 
 
 
 
 enum ColorMaps{
-    COLORMAP_VIRIDIS,
+    COLORMAP_VIRIDIS = 0,
     COLORMAP_PARULA,
     COLORMAP_MAGMA,
     COLORMAP_RAINBOW,
@@ -82,21 +90,38 @@ public:
 	
     ofxOusterColorMap();
 	
+    void setup(ofxGuiGroup* gui, string name);
+    
 	ofFloatImage img;
 	
-    ofParameter<int> color_map_mode = {"Color Map Mode", 0, 0, 7};
-    
-    
-    void setup(ofxPanel& gui, bool bMakeDropdown = true);
-    
-    void selectMap(ColorMaps index);
+    void selectMap(size_t index);
     
     void setColorMapFromData(const float data[][3], int dataLength);
-private:
-    ofEventListeners listeners;
     
-    unique_ptr<ofxIntDropdown> colorMapDropdown = nullptr;
+    const map<int, string>& getNamesMap(){return ColorNames;}
+    
+    /// think of colorMap as an color image of any width (defaults to 256) and height 1;
+    void addColorMap(const string& name, ofFloatPixels colorMap );
+    
+    /// make a new color map based on the vector of colors passed. any number of colors can be passed and the map will be generated with values by interpolating between colors
+    void makeColorMap(const string& name, const vector<ofFloatColor>& colors);
+    
+    
+protected:
     unique_ptr<ofxColorMapGui> colorMapGui = nullptr;
+    
+    vector< ofFloatPixels > ownedColorMaps;
+    
+    map<int, string> ColorNames =     {
+        {COLORMAP_VIRIDIS, "VIRIDIS"},
+        {COLORMAP_PARULA, "PARULA"},
+        {COLORMAP_MAGMA, "MAGMA"},
+        {COLORMAP_RAINBOW, "RAINBOW"},
+        {COLORMAP_TOSQEX, "TOSQEX"},
+        {COLORMAP_OUTRUN, "OUTRUN"},
+        {COLORMAP_CUBEHELIX, "CUBEHELIX"},
+        {COLORMAP_SPEZIA, "SPEZIA"},
+    };
     
     
 };
