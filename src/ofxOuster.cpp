@@ -23,7 +23,7 @@ void ofxOuster::connect(const std::string& hostname_, int lidar_port_, int imu_p
     _client = make_unique<ofxOusterClient>(hostname_, lidar_port_,imu_port_);
     _listeners.unsubscribeAll();
     _listeners.push(ofEvents().update.newListener(this, &ofxOuster::_update));
-    
+    _client->startThread();
     
 }
 
@@ -39,6 +39,7 @@ void ofxOuster::connect(const std::string& hostname_,
     _client = make_unique<ofxOusterClient>(hostname_, udp_dest_host_, mode_, ts_mode_, lidar_port_,imu_port_,timeout_sec_);
     _listeners.unsubscribeAll();
     _listeners.push(ofEvents().update.newListener(this, &ofxOuster::_update));
+    _client->startThread();
     
 }
 
@@ -192,7 +193,7 @@ ofxOusterRenderer* ofxOuster::getRenderer(){
 
 
 
-void ofxOuster::load(const std::string& dataFile, const std::string& configFile, uint16_t lidar_port, uint16_t imu_port){
+bool ofxOuster::load(const std::string& dataFile, const std::string& configFile, uint16_t lidar_port, uint16_t imu_port){
     
     closeFile();
     if(!_player){
@@ -206,7 +207,9 @@ void ofxOuster::load(const std::string& dataFile, const std::string& configFile,
         if(!_renderer){
             _initRenderer();
         }
+        return true;
     }
+    return false;
 }
 void ofxOuster::closeFile(){
     if(_player){
@@ -231,4 +234,31 @@ const ouster::sensor::sensor_info& ofxOuster::getSensorInfo() const{
     
     ofLogError("ofxOuster::getSensorInfo()") << "cant get sensor info it there is no client or player";
     return dummyInfo;
+}
+
+#define LOG_PLAYBACK_ERROR(cmd) if(!_player) {ofLogError(string("ofxOuster::")+ cmd) << "You can only call this function when playing back a .pcap file."; return;}
+
+void ofxOuster::play(){
+    LOG_PLAYBACK_ERROR("play")
+    _player->play();
+}
+void ofxOuster::pause(){
+    LOG_PLAYBACK_ERROR("Pause")
+    _player->pause();
+}
+void ofxOuster::stop(){
+    LOG_PLAYBACK_ERROR("Stop")
+    _player->stop();
+}
+void ofxOuster::nextFrame(){
+    LOG_PLAYBACK_ERROR("Next Frame")
+    _player->nextFrame();
+}
+bool ofxOuster::isPlaying(){
+//    LOG_PLAYBACK_ERROR("Is PLaying")
+    if(_player){
+        return _player->isPlaying();
+    }
+    return false;
+    
 }

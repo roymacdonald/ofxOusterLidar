@@ -52,9 +52,9 @@ public:
      * Even when this functions load an already recorded file, such file is actually a raw network stream saved to disk.
      * So, in order to decode the data properly the network ports through which data came through is needed.
      * Specifying the network ports is optional, and most probably useful when reading a file that was recorded on ports other than the default or the jsonConfig file does not include such information
-     *
+     * @returns true if  loading was successful, false otherwise
      */
-    void load(const std::string& pcapDataFile, const std::string& jsonConfigFile, uint16_t lidar_port = 7502, uint16_t imu_port = 7503);
+    bool load(const std::string& pcapDataFile, const std::string& jsonConfigFile, uint16_t lidar_port = 7502, uint16_t imu_port = 7503);
     
     
     /// closes a file being read. You only need to call this after reading a file but it will be called automatically in the destructor
@@ -92,6 +92,17 @@ public:
     
     ofEvent<ouster::LidarScan> lidarDataEvent;
     ofEvent<ofxOusterIMUData> imuDataEvent;
+    
+    
+    /// Playback control.
+    /// Only useful when loading a pcap file.
+    void play();
+    void pause();
+    void stop();
+    void nextFrame();
+    
+    bool isPlaying();
+    
     
 protected:
     void onLidarData(ouster::LidarScan&);
