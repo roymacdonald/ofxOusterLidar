@@ -28,27 +28,17 @@ public:
     ofxOusterPlayer(){}
     ~ofxOusterPlayer();
     /// Loads a .pcap file. that you can either save using this addon or Ouster Studio
-        //
-        bool load(const std::string& pcapDataFile, const std::string& jsonConfigFile, uint16_t lidar_port, uint16_t imu_port);
-        
-        
-        /// closes a file being read. You only need to call this after reading a file but it will be called automatically in the destructor
-        void closeFile();
-        
+    //
+    bool load(const std::string& pcapDataFile, const std::string& jsonConfigFile, uint16_t lidar_port, uint16_t imu_port);
     
+    
+    /// closes a file being read. You only need to call this after reading a file but it will be called automatically in the destructor
+    void closeFile();
     
     PlaybackDataType getNextScan();
     
-    static void exportImuData(const string& filepath, std::shared_ptr<ouster::sensor_utils::playback_handle> playbackHandle, ouster::sensor::sensor_info &sensorInfo);
-    
-    static void exportScanToCSV(const string& filepath, std::shared_ptr<ouster::sensor_utils::playback_handle> playbackHandle, ouster::sensor::sensor_info &sensorInfo);
-        
     ofEvent<ouster::LidarScan> lidarDataEvent;
     ofEvent<ofxOusterIMUData> imuDataEvent;
-    
-    
-    
-    
     
     
     ouster::LidarScan ls_write;
@@ -63,18 +53,22 @@ public:
     void pause();
     void stop();
     void nextFrame();
+    void firstFrame();
     
     bool isPlaying(){return bIsPlaying;}
     
     const ouster::sensor::sensor_info& getSensorInfo() {return sensorInfo;}
+    
+    
+protected:
     
     uint64_t timestampDiff = 0;
     uint64_t updatesDiff = 0;
     uint64_t lastLidarData = 0;
     uint64_t lidarDataDiff = 0;
     uint64_t frameCount = 0;
-protected:
-
+    
+    
     std::string _dataFile = "";
     std::string _configFile = "";
     
@@ -89,7 +83,7 @@ protected:
     uint64_t lasttimestamp = 0;
     uint64_t lastUpdateMicros = 0;
     ofEventListener _updateListener;
-
+    
     bool bIsPlaying = false;
     ouster::sensor::sensor_info sensorInfo;
     
