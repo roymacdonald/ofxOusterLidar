@@ -254,6 +254,13 @@ void ofxOuster::nextFrame(){
     LOG_PLAYBACK_ERROR("Next Frame")
     _player->nextFrame();
 }
+
+void ofxOuster::firstFrame(){
+    LOG_PLAYBACK_ERROR("First Frame")
+    _player->firstFrame();
+}
+
+
 bool ofxOuster::isPlaying(){
 //    LOG_PLAYBACK_ERROR("Is PLaying")
     if(_player){
@@ -261,4 +268,21 @@ bool ofxOuster::isPlaying(){
     }
     return false;
     
+}
+
+
+bool ofxOuster::isFileLoaded(){
+    if(_player){
+        return true;
+    }
+    return false;
+}
+
+
+/// Returns true if ithere is an active connection to an Ouster device
+bool ofxOuster::isConnected(){
+    if(_client){
+        return true;
+    }
+    return false;
 }

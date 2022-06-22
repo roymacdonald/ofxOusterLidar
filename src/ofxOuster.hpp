@@ -89,8 +89,14 @@ public:
     ofxOusterRenderer* getRenderer();
     
 
-    
+    ///Event triggered when a new frame has arrived.
+    /// The event itself will contain a reference to the new frame, which is accessible through the callback function registered to this event.
+    /// The scan data come in the ouster::LidarScan format, which is "raw". You still need to process it to make it useful. Ouster provides tools for such through its SDK
     ofEvent<ouster::LidarScan> lidarDataEvent;
+    ///Event triggered when new IMU data arrives.
+    ///The event itself will contain a reference to the new data, which is accessible through the callback function registered to this event.
+    /// Notice that this will be triggered several times for each frame that arrives, as the default sampling for the IMU is 100 times per second.
+    /// The data is the raw unprocessed sensor data coming from the device. It is up to you to use it somehow. Check the ofxOusterIMU.h file for what kind of data is available
     ofEvent<ofxOusterIMUData> imuDataEvent;
     
     
@@ -100,8 +106,16 @@ public:
     void pause();
     void stop();
     void nextFrame();
+    void firstFrame();
     
     bool isPlaying();
+    
+    /// Returns true if there is a pcap file loaded, false otherwise
+    bool isFileLoaded();
+    
+    
+    /// Returns true if ithere is an active connection to an Ouster device
+    bool isConnected();
     
     
 protected:
