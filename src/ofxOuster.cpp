@@ -148,6 +148,8 @@ bool ofxOuster::load(const std::string& dataFile, const std::string& configFile,
     }
     
     if(_player->load(dataFile, configFile, lidar_port, imu_port)){
+        _listeners.unsubscribeAll();
+        _listeners.push(ofEvents().update.newListener(this, &ofxOuster::_update));
         _player->play();
         return true;
     }
