@@ -35,11 +35,7 @@ class ofApp : public ofBaseApp{
     ofParameter<void> openPcap = {"open .pcap file"};
     
 	ofEventListeners listeners;
-
-    ofMesh storedPoints;
     
-    bool bShowStoredPoints = false;
-    bool bShowLivePoints = true;
 
     ofEasyCam cam;
     

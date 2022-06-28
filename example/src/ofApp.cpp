@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     
-    
+    ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetBackgroundAuto(false);
 
 	string settings = "network_settings.json";
@@ -19,19 +19,27 @@ void ofApp::setup(){
     }
 	
 	listeners.push(connect.newListener([&](){
+        //when connect is pressed try to connect to a lidar at the ip address specified in lidarIp
 		lidar.connect(lidarIp.get(), udpDestIp.get());
 	}));
     
     
     listeners.push(openPcap.newListener([&](){
+        // when openPcap is pressed do the following
+        
         string dir = "/Users/roy/Desktop/park_stephan/";
         lidar.load(dir+ "2022-06-02-13-50-11_OS-1-64-992214000010-1024x10.pcap",
                    dir+ "2022-06-02-13-50-11_OS-1-64-992214000010-1024x10.json");
+//        lidar.load("/Volumes/MacHD/Users/roy/Desktop/park_stephan/2022-06-02-13-50-11_OS-1-64-992214000010-1024x10.pcap",        "/Volumes/MacHD/Users/roy/Desktop/park_stephan/2022-06-02-13-50-11_OS-1-64-992214000010-1024x10.json");
+//                lidar.load("/Users/roy/Downloads/OS0_128_freeway_sample/OS0_128_freeway_sample.pcap",
+//                            "/Users/roy/Downloads/OS0_128_freeway_sample/OS0_2048x10_128.json", 47691, 37873);
     }));
     
-    
+    // Move the lidars gui so it does not overlap with ofApp's gui.
     lidar.setGuiPosition(gui.getShape().getBottomLeft() + glm::vec2(0, 20));
     
+    
+    // this are just some ofEasyCam settings I find better for viewing pointclouds
     cam.setFarClip(1000000);
     cam.setNearClip(0);
     cam.setRelativeYAxis(!cam.getRelativeYAxis());
@@ -54,55 +62,27 @@ void ofApp::exit(){
 void ofApp::draw(){
   ofBackground(0,0,0);
 	
-    if(bShowStoredPoints){
-        cam.begin();
-        ofPushStyle();
-        ofSetColor(ofColor::red);
-        storedPoints.draw();
-        ofPopStyle();
-        cam.end();
-    }
     
-    if(bShowLivePoints){
-        lidar.draw(cam);
+    lidar.draw(cam);
     
-        lidar.drawGui();
-    }
+    lidar.drawGui();
+    
 	gui.draw();
 	
-    stringstream ss;
-    
-    ss << "Press [ key ]:\n";
-    ss << "      [space]: to store the current point cloud.\n";
-    ss << "      [  1  ]: to " << (bShowStoredPoints?"HIDE":"SHOW") << " Stored Points.\n" ;
-    ss << "      [  2  ]: to " << (bShowLivePoints?"HIDE":"SHOW") << " Live Points.";
-    
-    
-    ofBitmapFont bf;
-    auto r = bf.getBoundingBox(ss.str(), 0, 0);
-    
-    ofDrawBitmapStringHighlight(ss.str(), 20, ofGetHeight() - 20 - r.height);
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
-    if(key == ' '){
-        if(lidar.getRenderer()){
-            storedPoints.setMode(OF_PRIMITIVE_POINTS);
-            storedPoints.addVertices(lidar.getRenderer()->getPointCloud());
-        }
-    }else if(key == '1'){
-        bShowStoredPoints ^= true;
-    }else if(key == '2'){
-        bShowLivePoints ^= true;
-    }
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
 
+//    if(key == ' '){
+//        
+//    }
 }
 
 //--------------------------------------------------------------
