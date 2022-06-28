@@ -18,14 +18,18 @@
 #include "ouster/os_pcap.h"
 #include "ofxOusterIMU.h"
 
+
+
 enum PlaybackDataType{
     PLAYBACK_NONE = 0,
     PLAYBACK_LIDAR = 1,
     PLAYBACK_IMU = 2
 };
-class ofxOusterPlayer{
+
+class ofxOusterPlayer: public ofThread
+{
 public:
-    ofxOusterPlayer(){}
+    ofxOusterPlayer();
     ~ofxOusterPlayer();
     /// Loads a .pcap file. that you can either save using this addon or Ouster Studio
     //
@@ -37,9 +41,9 @@ public:
     
     PlaybackDataType getNextScan();
     
-    ofEvent<ouster::LidarScan> lidarDataEvent;
-    ofEvent<ofxOusterIMUData> imuDataEvent;
-    
+    ofThreadChannel<ouster::LidarScan> lidarScanChannel;
+    ofThreadChannel<ofxOusterIMUData> imuChannel;
+
     
     ouster::LidarScan ls_write;
     ofxOusterIMUData imuData;
@@ -61,18 +65,15 @@ public:
     
     
 protected:
+
     
-    uint64_t timestampDiff = 0;
-    uint64_t updatesDiff = 0;
-    uint64_t lastLidarData = 0;
-    uint64_t lidarDataDiff = 0;
-    uint64_t frameCount = 0;
     
     
     std::string _dataFile = "";
     std::string _configFile = "";
-    
-    void _update(ofEventArgs&);
+
+
+    virtual void threadedFunction() override;
     
     std::unique_ptr<ouster::ScanBatcher> _batchScan = nullptr;
     
@@ -80,12 +81,25 @@ protected:
     std::vector<uint8_t> imu_buf;
     
     std::shared_ptr<ouster::sensor_utils::playback_handle> playbackHandle = nullptr;
-    uint64_t lasttimestamp = 0;
-    uint64_t lastUpdateMicros = 0;
-    ofEventListener _updateListener;
     
-    bool bIsPlaying = false;
+    
+    std::chrono::time_point<std::chrono::high_resolution_clock> lastUpdate;
+    
+    
+    std::atomic<bool> bIsPlaying;
     ouster::sensor::sensor_info sensorInfo;
     
-    ouster::sensor_utils::packet_info packet_info;
+    
+
+private:
+    
+    void _trySleeping(ouster::sensor_utils::packet_info& packet_info);
+    
+    uint64_t timestampDiff = 0;
+    uint64_t updatesDiff = 0;
+    
+    std::atomic<uint64_t> frameCount;
+    std::atomic<uint64_t> lasttimestamp;
+    
+    
 };
