@@ -117,14 +117,37 @@ public:
     /// Returns true if ithere is an active connection to an Ouster device
     bool isConnected();
     
+    const ouster::XYZLut& getLut();
+    
+    
+    /// Thread channel getters. YOu should not need to use these unless you know what you are doing.
+    
+    ofThreadChannel<ouster::LidarScan> * getLidarScanChannel();
+    ofThreadChannel<ofxOusterIMUData> * getImuChannel();
+    
+    
+    /// Enable/Disable the renderer.
+    /// This is mostly useful when you want to ingest the thread channels on a different thread and/or class.
+    /// Be careful that if you disable the renderer and dont ingest the data it will just pile up and might make your app crash after a while because of lack of memory.
+    /// If you want to have a headless app or not rendering the Lidars data you should disable it and implement your own ofThreadChannel "receiver".
+    /// Use the following functions to get the thread channels.
+    /// Check openFrameworksFolder/examples/threads/threadChannelExample/ for how to use these.
+    /// ofThreadChannel<ouster::LidarScan> * getLidarScanChannel();
+    /// ofThreadChannel<ofxOusterIMUData> * getImuChannel();
+    
+    void enableRenderer();
+    void disableRenderer();
+    bool isRendererEnabled();
+
+    
     
 protected:
     void onLidarData(ouster::LidarScan&);
     void onImuData(ofxOusterIMUData&);
     
 private:
-    std::atomic<bool> _bRendererInited;
     
+    std::atomic<bool> _bRendererEnabled;
     /// The pointer to the renderer in case access to it is needed.
     unique_ptr<ofxOusterRenderer> _renderer = nullptr;
     
@@ -142,8 +165,13 @@ private:
     ofxOusterIMUData imuData;
 
     glm::vec2 _guiPos = {10,10};
+
     unique_ptr<ofxOusterClient> _client = nullptr;
     unique_ptr<ofxOusterPlayer> _player = nullptr;
-    
+
     ouster::sensor::sensor_info dummyInfo;
+    
+    ouster::XYZLut lut;
+    bool bMakeLut = true;
+    
 };

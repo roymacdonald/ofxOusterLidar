@@ -5,7 +5,7 @@
 
 
 namespace sensor = ouster::sensor;
-ofxOuster::ofxOuster()
+ofxOuster::ofxOuster():_bRendererEnabled(true)
 {
 }
 
@@ -45,31 +45,35 @@ void ofxOuster::connect(const std::string& hostname_,
 
 void ofxOuster::_initRenderer()
 {
-	if(!_renderer)
-	{
-        ouster::sensor::sensor_info sensorInfo;
-        if(_client){
-            sensorInfo = _client->getSensorInfo();
-        }else if(_player){
-            sensorInfo = _player->getSensorInfo();
-        }else{
-            ofLogError("ofxOuster::_initRenderer") << "can not init renderer whith no client or player";
-        }
-		_renderer = make_unique<ofxOusterRenderer>(sensorInfo);
+    if(_bRendererEnabled){
+        if(!_renderer)
+        {
+            ouster::sensor::sensor_info sensorInfo;
+            if(_client){
+                sensorInfo = _client->getSensorInfo();
+            }else if(_player){
+                sensorInfo = _player->getSensorInfo();
+            }else{
+                ofLogError("ofxOuster::_initRenderer") << "can not init renderer whith no client or player";
+                return;
+            }
+            _renderer = make_unique<ofxOusterRenderer>(sensorInfo);
 
-        _renderer->setGuiPosition(_guiPos);
-	}
+            _renderer->setGuiPosition(_guiPos);
+        }
+    }
 }
 
 void ofxOuster::_update(ofEventArgs&)
 {
     
-    if(_client && _client->isInited()){
-        if(_client->isSetup() && !_renderer){
+    if((_client && _client->isInited() )|| _player){
+        if(_bRendererEnabled && !_renderer && (_client->isSetup() || _player )  ){
             _initRenderer();
         }
+        
         bool bNewData = false;
-        while(_client->lidarScanChannel.tryReceive(_readScan))
+        while(getLidarScanChannel()->tryReceive(_readScan))
         {
             bNewData = true;
             // The lidarScanChannel is an ofThreadChannel which behaves as a safe queue between threads.
@@ -81,7 +85,7 @@ void ofxOuster::_update(ofEventArgs&)
             ofNotifyEvent(lidarDataEvent, _readScan, this);
         }
         ofxOusterIMUData imuData;
-        while(_client->imuChannel.tryReceive(imuData))
+        while(getImuChannel()->tryReceive(imuData))
         {
             ofNotifyEvent(imuDataEvent, imuData, this);
         }
@@ -90,7 +94,7 @@ void ofxOuster::_update(ofEventArgs&)
 
 void ofxOuster::drawPointCloud()
 {
-    if(_renderer)
+    if(_bRendererEnabled && _renderer)
     {
         _renderer->drawPointCloud();
     }
@@ -100,31 +104,17 @@ void ofxOuster::drawPointCloud()
 
 void ofxOuster::draw(ofEasyCam & cam)
 {
-	if(_renderer)
+	if(_bRendererEnabled && _renderer)
 	{
         _renderer->draw(cam);
 	}
-//    if(_player){
-//        stringstream ss;
-//        ss << "timestampDiff: " << _player->timestampDiff << "\n";
-//        ss << "updatesDiff: " << _player->updatesDiff << "\n";
-//        ss << "FPS: " << (1000000.0/(float)_player->updatesDiff)<< "\n";
-//
-//
-//        ss << "lidarDataDiff: " << _player->lidarDataDiff << "\n";
-//        ss <<"fps: " << (1000000.0/(float)_player->lidarDataDiff) << "\n";
-//        ss << "FrameCount: " << _player->frameCount << "\n";
-//
-//        ofDrawBitmapStringHighlight(ss.str(), ofGetWidth()/2, 30);
-//
-//    }
 }
 
 
 void ofxOuster::drawGui()
 {
 	
-	if(_renderer)
+	if(_bRendererEnabled && _renderer)
 	{
 		_renderer->drawGui();
 	}
@@ -143,55 +133,12 @@ void ofxOuster::setGuiPosition(const glm::vec2& pos){
 }
 
 ofxOusterRenderer* ofxOuster::getRenderer(){
-    if(_renderer){
+    if(_bRendererEnabled && _renderer){
         return _renderer.get();
     }else{
         return nullptr;
     }
 }
-
-//
-//bool ofxOuster::updateImuFusion(ofxOusterIMUData & data){
-//    if(lastImuTimestamp > 0){
-//        const FusionVector gyroscope = {data.gyro.x,data.gyro.y,data.gyro.z};
-//        const FusionVector accelerometer = {data.accel.x,data.accel.y,data.accel.z};
-//
-//        imuFusion.deltaTime = (data.sys_timestamp - lastImuTimestamp)/1000000000.0f;
-//
-//        FusionAhrsUpdateNoMagnetometer(&ahrs, gyroscope, accelerometer, imuFusion.deltaTime);//timestamp from IMU is in nanoseconds and Fusion requires it to be in seconds
-//
-//        auto fquat = FusionAhrsGetQuaternion(&ahrs);
-////        auto feuler = FusionQuaternionToEuler(fquat);
-//        auto fearth = FusionAhrsGetEarthAcceleration(&ahrs);
-////        auto linear = FusionAhrsGetLinearAcceleration(&ahrs);
-//        imuFusion.quat = *reinterpret_cast<glm::quat*>(&fquat);
-////        imuFusion.euler = *reinterpret_cast<glm::vec3*>(&feuler);
-//        imuFusion.updatePosition(*reinterpret_cast<glm::vec3*>(&fearth));
-////        imuFusion.updatePosition(*reinterpret_cast<glm::vec3*>(&linear));
-//
-////        imuFusion.euler += imuFusion.deltaTime * data.gyro;
-//
-////        gyroscope
-//
-////        cout<< "earth: " << fearth.axis.x << ", "<< fearth.axis.y << ", "<< fearth.axis.z << endl;
-//
-////        cout<< "linear: " << linear.axis.x << ", "<< linear.axis.y << ", "<< linear.axis.z << endl;
-//
-////        node.setPosition(imuFusion.position);//.x, imuFusion.position.y, 0.0f);
-//        // node.setOrientation(imuFusion.quat);
-////        node.setOrientation(imuFusion.euler);
-//
-//        lastImuTimestamp = data.sys_timestamp ;
-//        return true;
-//    }
-//    lastImuTimestamp = data.sys_timestamp ;
-//
-//
-//    return false;
-//}
-
-
-
 
 bool ofxOuster::load(const std::string& dataFile, const std::string& configFile, uint16_t lidar_port, uint16_t imu_port){
     
@@ -201,30 +148,19 @@ bool ofxOuster::load(const std::string& dataFile, const std::string& configFile,
     }
     
     if(_player->load(dataFile, configFile, lidar_port, imu_port)){
-        _listeners.push(_player->lidarDataEvent.newListener(this, &ofxOuster::onLidarData));
-        _listeners.push(_player->imuDataEvent.newListener(this, &ofxOuster::onImuData));
         _player->play();
-        if(!_renderer){
-            _initRenderer();
-        }
         return true;
     }
     return false;
 }
+
 void ofxOuster::closeFile(){
     if(_player){
         _player->closeFile();
     }
     _listeners.unsubscribeAll();
 }
-void ofxOuster::onLidarData(ouster::LidarScan& scan){
-    _readScan = scan;
-    if(_renderer)_renderer->render(_readScan);
-    ofNotifyEvent(lidarDataEvent, _readScan, this);
-}
-void ofxOuster::onImuData(ofxOusterIMUData& data){
-    ofNotifyEvent(imuDataEvent, data, this);
-}
+
 const ouster::sensor::sensor_info& ofxOuster::getSensorInfo() const{
     if(_client){
         return _client->getSensorInfo();
@@ -285,4 +221,49 @@ bool ofxOuster::isConnected(){
         return true;
     }
     return false;
+}
+
+const ouster::XYZLut& ofxOuster::getLut(){
+    auto r = getRenderer();
+    if(r){
+        return r->getLut();
+    }
+    
+    if(bMakeLut){
+        bMakeLut = false;
+        auto & info = getSensorInfo();
+        
+        lut = ofxOusterRenderer::makeLut(info);
+    }
+    
+    return lut;
+}
+ofThreadChannel<ouster::LidarScan> * ofxOuster::getLidarScanChannel(){
+    if(_client){
+        return &(_client->lidarScanChannel);
+    }
+    else if(_player){
+        return &(_player->lidarScanChannel);
+    }
+    return nullptr;
+}
+ofThreadChannel<ofxOusterIMUData> * ofxOuster::getImuChannel(){
+    if(_client){
+        return &(_client->imuChannel);
+    }
+    else if(_player){
+        return &(_player->imuChannel);
+    }
+    return nullptr;
+}
+
+void ofxOuster::enableRenderer(){
+    _bRendererEnabled = true;
+}
+void ofxOuster::disableRenderer(){
+    _bRendererEnabled = false;
+    _renderer = nullptr;
+}
+bool ofxOuster::isRendererEnabled(){
+    return _bRendererEnabled;
 }
