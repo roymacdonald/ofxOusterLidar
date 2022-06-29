@@ -99,6 +99,7 @@ bool ofxOusterClient::_initClient()
             return false;
         }
         
+        frameCount = 0;
         
         setMetadata(sensor::get_metadata(*cli));
         
@@ -154,6 +155,7 @@ void ofxOusterClient::threadedFunction(){
                         if (st & sensor::client_state::LIDAR_DATA) {
                             if (sensor::read_lidar_packet(*cli, lidar_buf.data(),packetFormat)) {
                                 if (_batchScan(lidar_buf.data(), ls_write)) {
+                                      frameCount ++;
                                       lidarScanChannel.send(ls_write);
                                   }
                             }else
@@ -206,6 +208,7 @@ void ofxOusterClient::_initValues()
     imu_port = 0;
     timeout_sec = 30;
     _bisSetup = false;
+    frameCount = 0;
     /// initialize IMU fusion
 //    FusionAhrsInitialise(&ahrs);
     _clientInited = false;    
@@ -219,4 +222,8 @@ bool ofxOusterClient::isInited(){
 }
 const ouster::sensor::sensor_info& ofxOusterClient::getSensorInfo() {
     return sensorInfo;
+}
+
+uint64_t ofxOusterClient::getFrameCount(){
+    return frameCount;
 }

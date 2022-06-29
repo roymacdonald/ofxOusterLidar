@@ -86,6 +86,8 @@ public:
     
     bool isInited();
     
+    uint64_t getFrameCount();
+    
 protected:
     
     virtual void threadedFunction() override;
@@ -112,7 +114,7 @@ private:
     std::atomic<int> timeout_sec;
     
     
-    
+    std::atomic<uint64_t> frameCount;
 
     ofMutex hostMutex;
     std::string hostname;
