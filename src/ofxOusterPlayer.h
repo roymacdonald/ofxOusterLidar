@@ -49,8 +49,7 @@ public:
     ofxOusterIMUData imuData;
     
     
-    // when true it will respect the packages timestamp, when false it will not and run as fast as possible
-    bool bRunRealtime = true;
+    
     
     /// Playback Control
     void play();
@@ -62,6 +61,8 @@ public:
     bool isPlaying(){return bIsPlaying;}
     
     const ouster::sensor::sensor_info& getSensorInfo() {return sensorInfo;}
+    
+    uint64_t getFrameCount();
     
     
 protected:
@@ -92,6 +93,9 @@ protected:
     
 
 private:
+    
+    // when true it will respect the packages timestamp, when false it will not and run as fast as possible
+    bool bRunRealtime = true;
     
     void _trySleeping(ouster::sensor_utils::packet_info& packet_info);
     

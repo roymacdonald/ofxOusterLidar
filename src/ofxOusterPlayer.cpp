@@ -13,6 +13,7 @@ ofxOusterPlayer::ofxOusterPlayer():
 bIsPlaying(false),
 frameCount (0),
 lasttimestamp (0)
+
 {
     
 }
@@ -86,10 +87,12 @@ void ofxOusterPlayer::play(){
 void ofxOusterPlayer::pause(){
     if(bIsPlaying){
         bIsPlaying = false;
-        stopThread();
+        waitForThread(true, 3000);
+//        stopThread();
     }
 }
 void ofxOusterPlayer::stop(){
+//    bNeedsStop = true;
     closeFile();
     load(_dataFile, _configFile, sensorInfo.udp_port_lidar, sensorInfo.udp_port_imu);
 }
@@ -108,22 +111,25 @@ void ofxOusterPlayer::firstFrame(){
 
 void ofxOusterPlayer::closeFile(){
     if(playbackHandle != nullptr){
-        stopThread();
+        pause();
         ouster::sensor_utils::replay_uninitialize(*playbackHandle);
         lasttimestamp = 0;
         frameCount = 0;
-        pause();
+        
         
         playbackHandle = nullptr;
     }
 }
+
 
 void ofxOusterPlayer::threadedFunction(){
     while(isThreadRunning()){
         auto d = getNextScan();
         if(d == PlaybackDataType::PLAYBACK_NONE){
             cout << "stopThread()\n";
-            stopThread();
+//            stopThread();
+            stop();
+    
         }
     }
     cout << "ofxOusterPlayer::threadedFunction end{\n";
@@ -143,7 +149,6 @@ void ofxOusterPlayer::_trySleeping(ouster::sensor_utils::packet_info& packet_inf
             bNeedsSleep = false;
         }
         if(bNeedsSleep){
-            frameCount ++;
             if(timestamp > lasttimestamp){
                 long ms = timestampDiff - updatesDiff;
                 if(ms > 0){
@@ -164,7 +169,7 @@ PlaybackDataType ofxOusterPlayer::getNextScan(){
         
         ouster::sensor_utils::packet_info packet_info;
         
-        while   (ouster::sensor_utils::next_packet_info(*playbackHandle,  packet_info)) {
+        while   ((playbackHandle != nullptr) &&  ouster::sensor_utils::next_packet_info(*playbackHandle,  packet_info)) {
             if(bRunRealtime){
                 _trySleeping(packet_info);
             }
@@ -207,3 +212,6 @@ PlaybackDataType ofxOusterPlayer::getNextScan(){
 }
 
 
+uint64_t ofxOusterPlayer::getFrameCount(){
+    return frameCount ;
+}
