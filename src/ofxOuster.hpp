@@ -140,7 +140,7 @@ public:
     bool isRendererEnabled();
 
     
-    
+    uint64_t getFrameCount();
 protected:
     void onLidarData(ouster::LidarScan&);
     void onImuData(ofxOusterIMUData&);

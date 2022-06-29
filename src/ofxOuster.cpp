@@ -269,3 +269,13 @@ void ofxOuster::disableRenderer(){
 bool ofxOuster::isRendererEnabled(){
     return _bRendererEnabled;
 }
+
+uint64_t ofxOuster::getFrameCount(){
+    if(_client){
+        return _client->getFrameCount();
+    }
+    else if(_player){
+        return _player->getFrameCount();
+    }
+    return 0;
+}
