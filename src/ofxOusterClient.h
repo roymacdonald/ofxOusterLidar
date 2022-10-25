@@ -104,6 +104,8 @@ public:
     /// \return boolean. true if recording to PCAP file. false otherwise.
     bool isRecording();
     
+    /// Ends current PCAP recording, if any
+    void endRecording();
     
 protected:
     

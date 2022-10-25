@@ -11,7 +11,8 @@ ofxOuster::ofxOuster():_bRendererEnabled(true)
 
 ofxOuster::~ofxOuster()
 {
-
+    closeFile();
+    disconnect();
 }
 
 
@@ -20,6 +21,7 @@ ofxOuster::~ofxOuster()
 void ofxOuster::connect(const std::string& hostname_, int lidar_port_, int imu_port_)
 {
     closeFile();
+    disconnect();
     _client = make_unique<ofxOusterClient>(hostname_, lidar_port_,imu_port_);
     _listeners.unsubscribeAll();
     _listeners.push(ofEvents().update.newListener(this, &ofxOuster::_update));
@@ -36,11 +38,18 @@ void ofxOuster::connect(const std::string& hostname_,
 					  int timeout_sec_)
 {
     closeFile();
+    disconnect();
     _client = make_unique<ofxOusterClient>(hostname_, udp_dest_host_, mode_, ts_mode_, lidar_port_,imu_port_,timeout_sec_);
     _listeners.unsubscribeAll();
     _listeners.push(ofEvents().update.newListener(this, &ofxOuster::_update));
+    if(!recordingPath.empty()) recordToPCap(recordingPath);
     _client->startThread();
     
+}
+
+void ofxOuster::disconnect(){
+    _client = nullptr;
+    _listeners.unsubscribeAll();
 }
 
 void ofxOuster::_initRenderer()
@@ -143,6 +152,7 @@ ofxOusterRenderer* ofxOuster::getRenderer(){
 bool ofxOuster::load(const std::string& dataFile, const std::string& configFile, uint16_t lidar_port, uint16_t imu_port){
     
     closeFile();
+    disconnect();
     if(!_player){
         _player = make_unique<ofxOusterPlayer>();
     }
@@ -159,6 +169,7 @@ bool ofxOuster::load(const std::string& dataFile, const std::string& configFile,
 void ofxOuster::closeFile(){
     if(_player){
         _player->closeFile();
+        _player = nullptr;
     }
     _listeners.unsubscribeAll();
 }
@@ -288,10 +299,17 @@ bool ofxOuster::isRecording(){
 }
 
 bool ofxOuster::recordToPCap(const string& filepath){
+    recordingPath = filepath;
     if(_client){
-        
         return _client->recordToPCap(filepath);
     }
-    ofLogError("ofxOuster::recordToPCap") << "Initialize client before trying to record";
+    ofLogNotice("ofxOuster::recordToPCap") << "Client not inited. Will start recording as soon as the client is inited.";
     return false;
+}
+void ofxOuster::endRecording(){
+    if(_client){
+        _client->endRecording();
+    }
+    recordingPath = "";
+//    ofLogError("ofxOuster::endRecording") << "Client not inited";
 }

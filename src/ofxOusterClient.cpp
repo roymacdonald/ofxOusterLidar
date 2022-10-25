@@ -16,6 +16,7 @@ ofxOusterClient::ofxOusterClient(){
 
 ofxOusterClient::~ofxOusterClient(){
     ofThread::waitForThread(true, 30000);
+    endRecording();
 }
 
 ofxOusterClient::ofxOusterClient(const std::string& hostname_, int lidar_port_ , int imu_port_)
@@ -203,6 +204,7 @@ void ofxOusterClient::threadedFunction(){
                             
                         }
                 }
+                endRecording();
             }
         }else{
             cout <<"not setup\n";
@@ -266,11 +268,24 @@ bool ofxOusterClient::recordToPCap(const string& filepath){
         return false;
     }
     
-    _recorder = ouster::sensor_utils::record_initialize(filepath,
+    _recorder = ouster::sensor_utils::record_initialize(filepath + ".pcap",
                                                         65536, // taken from the python implementation. Not sure if this is the correct value.
                                                         false);
+    ofJson json;
+    json.parse(metadata);
+    
+    ofSaveJson(filepath + ".json", json);
+    
+    
     //int frag_size, bool use_sll_encapsulation = false);
     
     
     return true;
+}
+
+void ofxOusterClient::endRecording(){
+    if(_recorder){
+        ouster::sensor_utils::record_uninitialize(*_recorder.get());
+        _recorder = nullptr;
+    }
 }

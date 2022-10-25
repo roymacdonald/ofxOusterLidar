@@ -42,7 +42,10 @@ public:
                int lidar_port_ = 7502,
                int imu_port_ = 7503,
                int timeout_sec_ = 30);
-        
+       
+    /// Disconnects the client if it is currently connected
+    void disconnect();
+    
     /**
      * Loads a .pcap file. that you can either save using this addon or Ouster Studio
      * @param pcapDataFile file path to the PCAP data file
@@ -155,6 +158,8 @@ public:
     /// \return boolean. true if recording to PCAP file. false otherwise.
     bool isRecording();
     
+    /// Ends current PCAP recording, if any
+    void endRecording();
 protected:
     void onLidarData(ouster::LidarScan&);
     void onImuData(ofxOusterIMUData&);
@@ -186,6 +191,8 @@ private:
     ouster::sensor::sensor_info dummyInfo;
     
 //    std::shared_ptr<ouster::sensor_utils::record_handle> _recorder = nullptr;
+
+    string recordingPath = "";
     
     ouster::XYZLut lut;
     bool bMakeLut = true;
