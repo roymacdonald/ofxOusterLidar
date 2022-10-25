@@ -141,6 +141,20 @@ public:
 
     
     uint64_t getFrameCount();
+    
+    
+    /// Record the current stream into a PCAP file.
+    /// The PCAP file is the raw, unprocessed data stream coming from the lidar.
+    /// When played back it would replicate the exact behaviour as if the data was streaming live
+    /// \param filepath the file path where to save the PCAP file
+    /// \return boolean. If false the recording was not able to start. True if recording started successfully.
+    
+    bool recordToPCap(const string& filepath);
+    
+    
+    /// \return boolean. true if recording to PCAP file. false otherwise.
+    bool isRecording();
+    
 protected:
     void onLidarData(ouster::LidarScan&);
     void onImuData(ofxOusterIMUData&);
@@ -170,6 +184,8 @@ private:
     unique_ptr<ofxOusterPlayer> _player = nullptr;
 
     ouster::sensor::sensor_info dummyInfo;
+    
+//    std::shared_ptr<ouster::sensor_utils::record_handle> _recorder = nullptr;
     
     ouster::XYZLut lut;
     bool bMakeLut = true;

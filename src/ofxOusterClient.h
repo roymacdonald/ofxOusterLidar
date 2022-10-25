@@ -9,8 +9,9 @@
 #include "ofMain.h"
 
 #include "ouster/client.h"
-#include "ouster/netcompat.h"
+//#include "ouster/netcompat.h"
 #include "ouster/types.h"
+#include "ouster/os_pcap.h"
 
 #include "ouster/lidar_scan.h"
 
@@ -88,6 +89,22 @@ public:
     
     uint64_t getFrameCount();
     
+    int getLidarPort(){return lidar_port;}
+    int getImuPort(){return imu_port;}
+    
+    /// Record the current stream into a PCAP file.
+    /// The PCAP file is the raw, unprocessed data stream coming from the lidar.
+    /// When played back it would replicate the exact behaviour as if the data was streaming live
+    /// \param filepath the file path where to save the PCAP file
+    /// \return boolean. If false the recording was not able to start. True if recording started successfully.
+    
+    bool recordToPCap(const string& filepath);
+    
+    
+    /// \return boolean. true if recording to PCAP file. false otherwise.
+    bool isRecording();
+    
+    
 protected:
     
     virtual void threadedFunction() override;
@@ -104,7 +121,7 @@ private:
     std::atomic<bool> _bisSetup;
     
     
-    
+    std::shared_ptr<ouster::sensor_utils::record_handle> _recorder = nullptr;
     
     std::atomic<ouster::sensor::lidar_mode> mode;
     std::atomic<ouster::sensor::timestamp_mode> ts_mode;

@@ -11,7 +11,7 @@
 #include "ofMain.h"
 
 #include "ouster/client.h"
-#include "ouster/netcompat.h"
+//#include "ouster/netcompat.h"
 #include "ouster/types.h"
 #include "ouster/lidar_scan.h"
 

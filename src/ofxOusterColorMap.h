@@ -106,9 +106,9 @@ public:
     /// make a new color map based on the vector of colors passed. any number of colors can be passed and the map will be generated with values by interpolating between colors
     void makeColorMap(const string& name, const vector<ofFloatColor>& colors);
     
-    
-protected:
     unique_ptr<ofxColorMapGui> colorMapGui = nullptr;
+
+protected:
     
     vector< ofFloatPixels > ownedColorMaps;
     

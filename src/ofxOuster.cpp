@@ -279,3 +279,19 @@ uint64_t ofxOuster::getFrameCount(){
     }
     return 0;
 }
+
+bool ofxOuster::isRecording(){
+    if(_client){
+        return _client->isRecording();
+    }
+    return false;
+}
+
+bool ofxOuster::recordToPCap(const string& filepath){
+    if(_client){
+        
+        return _client->recordToPCap(filepath);
+    }
+    ofLogError("ofxOuster::recordToPCap") << "Initialize client before trying to record";
+    return false;
+}
