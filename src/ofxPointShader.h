@@ -32,6 +32,8 @@ public:
     /// maximum range in meters
     ofParameter<float> range_max = {"range_max", 200, 0, 500};
     
+    ofParameter<float> point_size = {"Point Size", 3, 1, 10};
+    
     void drawGui();
     
     void setGuiPosition(const glm::vec2& pos);
@@ -69,6 +71,9 @@ protected:
     void _setupParameters();
 
     string name;
+
+private:
+    ofEventListeners listeners;
     
 };
 

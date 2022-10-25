@@ -50,12 +50,18 @@ void ofxPointShader::_setupParameters()
 
 
     gui.add(range_max);
+    gui.add(point_size);
     
     colorMap.setup(&gui, name);
+    
+    listeners.push(point_size.newListener([&](float&){
+        glPointSize(point_size.get());
+    }));
     
     if(ofFile::doesFileExist(filename)){
         gui.loadFromFile(filename);
     }
+    
     
     
 }
