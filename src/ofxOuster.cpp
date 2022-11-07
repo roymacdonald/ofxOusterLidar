@@ -303,6 +303,10 @@ bool ofxOuster::recordToPCap(const string& filepath){
     if(_client){
         return _client->recordToPCap(filepath);
     }
+    if(_player){
+        ofLogNotice("ofxOuster::recordToPCap") << "Can not record in player mode.";
+        return false;
+    }
     ofLogNotice("ofxOuster::recordToPCap") << "Client not inited. Will start recording as soon as the client is inited.";
     return false;
 }

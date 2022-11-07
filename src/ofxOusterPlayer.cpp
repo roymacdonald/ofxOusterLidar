@@ -126,13 +126,13 @@ void ofxOusterPlayer::threadedFunction(){
     while(isThreadRunning()){
         auto d = getNextScan();
         if(d == PlaybackDataType::PLAYBACK_NONE){
-            cout << "stopThread()\n";
+//            cout << "stopThread()\n";
 //            stopThread();
             stop();
     
         }
     }
-    cout << "ofxOusterPlayer::threadedFunction end{\n";
+//    cout << "ofxOusterPlayer::threadedFunction end{\n";
 }
 
 void ofxOusterPlayer::_trySleeping(ouster::sensor_utils::packet_info& packet_info){
