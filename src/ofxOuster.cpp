@@ -5,8 +5,9 @@
 
 
 namespace sensor = ouster::sensor;
-ofxOuster::ofxOuster():_bRendererEnabled(true)
+ofxOuster::ofxOuster():_bRendererEnabled(true), _bIsEnableUpdating(true)
 {
+    
 }
 
 ofxOuster::~ofxOuster()
@@ -23,8 +24,9 @@ void ofxOuster::connect(const std::string& hostname_, int lidar_port_, int imu_p
     closeFile();
     disconnect();
     _client = make_unique<ofxOusterClient>(hostname_, lidar_port_,imu_port_);
-    _listeners.unsubscribeAll();
-    _listeners.push(ofEvents().update.newListener(this, &ofxOuster::_update));
+//    _listeners.unsubscribeAll();
+//    _listeners.push(ofEvents().update.newListener(this, &ofxOuster::_update));
+    setUpdateListener();
     _client->startThread();
     
 }
@@ -40,8 +42,9 @@ void ofxOuster::connect(const std::string& hostname_,
     closeFile();
     disconnect();
     _client = make_unique<ofxOusterClient>(hostname_, udp_dest_host_, mode_, ts_mode_, lidar_port_,imu_port_,timeout_sec_);
-    _listeners.unsubscribeAll();
-    _listeners.push(ofEvents().update.newListener(this, &ofxOuster::_update));
+//    _listeners.unsubscribeAll();
+//    _listeners.push(ofEvents().update.newListener(this, &ofxOuster::_update));
+    setUpdateListener();
     if(!recordingPath.empty()) recordToPCap(recordingPath);
     _client->startThread();
     
@@ -77,7 +80,7 @@ void ofxOuster::_update(ofEventArgs&)
 {
     
     if((_client && _client->isInited() )|| _player){
-        if(_bRendererEnabled && !_renderer && (_client->isSetup() || _player )  ){
+        if(_bRendererEnabled && !_renderer && ((_client && _client->isSetup()) || _player )  ){
             _initRenderer();
         }
         
@@ -158,8 +161,7 @@ bool ofxOuster::load(const std::string& dataFile, const std::string& configFile,
     }
     
     if(_player->load(dataFile, configFile, lidar_port, imu_port)){
-        _listeners.unsubscribeAll();
-        _listeners.push(ofEvents().update.newListener(this, &ofxOuster::_update));
+        setUpdateListener();
         _player->play();
         return true;
     }
@@ -316,4 +318,24 @@ void ofxOuster::endRecording(){
     }
     recordingPath = "";
 //    ofLogError("ofxOuster::endRecording") << "Client not inited";
+}
+void ofxOuster::setUpdateListener(){
+    if(_bIsEnableUpdating.load()){
+        cout << "ofxOuster::setUpdateListener" << endl;
+        _listeners.unsubscribeAll();
+        _listeners.push(ofEvents().update.newListener(this, &ofxOuster::_update));
+    }
+}
+void ofxOuster::enableUpdating(){
+    cout << "ofxOuster::enableUpdating" << endl;
+    if(!_bIsEnableUpdating.load()){
+        _bIsEnableUpdating = true;
+    }
+}
+void ofxOuster::disableUpdating(){
+    cout << "ofxOuster::disableUpdating" << endl;
+    if(_bIsEnableUpdating){
+        _bIsEnableUpdating = false;
+        _listeners.unsubscribeAll();
+    }
 }

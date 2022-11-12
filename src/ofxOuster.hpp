@@ -143,6 +143,7 @@ public:
     bool isRendererEnabled();
 
     
+    
     uint64_t getFrameCount();
     
     
@@ -160,11 +161,23 @@ public:
     
     /// Ends current PCAP recording, if any
     void endRecording();
+    
+    
+    void enableUpdating();
+    void disableUpdating();
+    bool isUpdatingEnabled(){
+        return _bIsEnableUpdating;
+    }
+    
+    
 protected:
     void onLidarData(ouster::LidarScan&);
     void onImuData(ofxOusterIMUData&);
     
 private:
+    std::atomic<bool> _bIsEnableUpdating;
+    void setUpdateListener();
+    
     
     std::atomic<bool> _bRendererEnabled;
     /// The pointer to the renderer in case access to it is needed.
@@ -196,5 +209,6 @@ private:
     
     ouster::XYZLut lut;
     bool bMakeLut = true;
+
     
 };
