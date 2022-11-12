@@ -1,52 +1,134 @@
 #include "ofApp.h"
 
+#define FILE_SETTINGS "file_Settings.json"
+
+string validateFileInJson(ofJson& json, string key){
+    if(json.contains(key)){
+        if(ofFile::doesFileExist(json[key])){
+            return json[key];
+        }else{
+            ofLogWarning("Opening Saved Datapaths")<<"File does not exist: " << json[key];
+        }
+    }else{
+        ofLogWarning("Opening Saved Datapaths")<<"Invalid key name: " << key;
+    }
+    return "";
+}
+
 //--------------------------------------------------------------
 void ofApp::setup(){
     
     ofSetLogLevel(OF_LOG_VERBOSE);
+    
     ofSetBackgroundAuto(false);
-
-	string settings = "network_settings.json";
-	gui.setup("ofxOuster", settings);
-	gui.add(lidarIp);
-	gui.add(udpDestIp);
-	gui.add(connect);
-    gui.add(openPcap);
+//    ofxGuiSetTextPadding(30);
+    
+    gui.setup();
+    connectParamGroup.add(lidarIp);
+    connectParamGroup.add(localIp);
+    connectParamGroup.add(connect);
+    connectParamGroup.add(bRecord);
+    playbackParamGroup.add(openPcapDialogParam);
+    playbackParamGroup.add(openPcapParam);
+    
+    gui.add(connectParamGroup);
+    gui.add(playbackParamGroup);
     
     
-    if(ofFile::doesFileExist(settings)){
-        gui.loadFromFile(settings);
-    }
-	
-	listeners.push(connect.newListener([&](){
-        //when connect is pressed try to connect to a lidar at the ip address specified in lidarIp
-		lidar.connect(lidarIp.get(), udpDestIp.get());
-	}));
     
     
-    listeners.push(openPcap.newListener([&](){
-        // when openPcap is pressed do the following
-        
-        string dir = "/Users/roy/Desktop/park_stephan/";
-        lidar.load(dir+ "2022-06-02-13-50-11_OS-1-64-992214000010-1024x10.pcap",
-                   dir+ "2022-06-02-13-50-11_OS-1-64-992214000010-1024x10.json");
-//        lidar.load("/Volumes/MacHD/Users/roy/Desktop/park_stephan/2022-06-02-13-50-11_OS-1-64-992214000010-1024x10.pcap",        "/Volumes/MacHD/Users/roy/Desktop/park_stephan/2022-06-02-13-50-11_OS-1-64-992214000010-1024x10.json");
-//                lidar.load("/Users/roy/Downloads/OS0_128_freeway_sample/OS0_128_freeway_sample.pcap",
-//                            "/Users/roy/Downloads/OS0_128_freeway_sample/OS0_2048x10_128.json", 47691, 37873);
+    listeners.push(connect.newListener([&](){
+        // set to the correct IP address of both your computer and the lidar
+        lidar.connect(lidarIp.get(), localIp.get());
     }));
     
-    // Move the lidars gui so it does not overlap with ofApp's gui.
+    
+    listeners.push(openPcapParam.newListener(this, &ofApp::tryOpenPcap));
+    
+    listeners.push(openPcapDialogParam.newListener(this, &ofApp::openPcapDialog));
+    
+
     lidar.setGuiPosition(gui.getShape().getBottomLeft() + glm::vec2(0, 20));
+
+    
+
+    listeners.push(bRecord.newListener([&](bool&){
+            if(bRecord.get()){
+                auto res = ofSystemSaveDialog("LidarRecording_"+ofGetTimestampString(), "Choose where to save your recording");
+            
+                if(res.bSuccess){
+                    recFile = res.getPath();
+                    if(!lidar.recordToPCap(res.getPath())){
+                        bRecord  = false;
+                    }
+                }else{
+                    bRecord = false;
+                }
+            }else{
+                if(lidar.isRecording()) lidar.endRecording();
+                recFile = "";
+            }
+        }
+    ));
     
     
-    // this are just some ofEasyCam settings I find better for viewing pointclouds
-    cam.setFarClip(1000000);
-    cam.setNearClip(0);
-    cam.setRelativeYAxis(!cam.getRelativeYAxis());
-    
+    cam.setFarClip(999999);
+    cam.setNearClip(0.00001);
     
 }
 
+//--------------------------------------------------------------
+bool ofApp::openPcap(string pcap, string config){
+    return lidar.load(pcap,config);
+}
+//--------------------------------------------------------------
+void ofApp::openPcapDialog(){
+    string pcap;
+    string config;
+    auto res = ofSystemLoadDialog("Select .pcap file");
+    if(res.bSuccess){
+        pcap = res.getPath();
+        if(ofFile::doesFileExist(pcap)){
+            
+            config = ofFilePath::join(ofFilePath::getEnclosingDirectory(pcap),ofFilePath::getBaseName(pcap)) + ".json";
+            if(!ofFile::doesFileExist(config)){
+                res = ofSystemLoadDialog("Select .json configuration file");
+                if(res.bSuccess){
+                    config = res.getPath();
+                }else{
+                    config = "";
+                }
+            }
+            if(openPcap(pcap, config)){
+                ofJson json;
+                json["PCAP"] = pcap;
+                json["Config"] = config;
+                
+                ofSaveJson(FILE_SETTINGS, json);
+            }
+        }
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::tryOpenPcap(){
+    string pcap, config;
+    if(ofFile::doesFileExist(FILE_SETTINGS)){
+        ofJson json = ofLoadJson(FILE_SETTINGS);
+        
+        pcap = validateFileInJson(json, "PCAP");
+        config = validateFileInJson(json, "Config");
+        
+        if(!pcap.empty() && !config.empty() ){
+            openPcap(pcap, config);
+        }else{
+            ofLogWarning("ofApp::openPcap") << "one of the filepaths is empty. Opening dialog";
+            openPcapDialog();
+        }
+    }
+}
+
+    
 //--------------------------------------------------------------
 void ofApp::update(){
 
@@ -80,9 +162,6 @@ void ofApp::keyPressed(int key){
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
 
-//    if(key == ' '){
-//        
-//    }
 }
 
 //--------------------------------------------------------------
