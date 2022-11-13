@@ -55,6 +55,12 @@ void ofxOuster::disconnect(){
     _listeners.unsubscribeAll();
 }
 
+
+
+bool ofxOuster::isLoaded(){
+    return _player != nullptr;
+}
+
 void ofxOuster::_initRenderer()
 {
     if(_bRendererEnabled){
@@ -232,10 +238,11 @@ bool ofxOuster::isFileLoaded(){
 
 /// Returns true if ithere is an active connection to an Ouster device
 bool ofxOuster::isConnected(){
-    if(_client){
-        return true;
-    }
-    return false;
+    return (_client != nullptr && _client->isSetup());
+//    if(_client){
+//        return true;
+//    }
+//    return false;
 }
 
 const ouster::XYZLut& ofxOuster::getLut(){

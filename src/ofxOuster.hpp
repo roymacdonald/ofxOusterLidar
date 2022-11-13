@@ -63,7 +63,7 @@ public:
     /// closes a file being read. You only need to call this after reading a file but it will be called automatically in the destructor
     void closeFile();
     
-    
+    bool isLoaded();
     
     
 	const ouster::sensor::sensor_info& getSensorInfo() const;
