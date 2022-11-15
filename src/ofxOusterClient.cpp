@@ -199,6 +199,7 @@ void ofxOusterClient::threadedFunction(){
                             }
                         }
                         if (st & sensor::EXIT) {
+                            endRecording();
                             stopThread();
                             break;
                             
