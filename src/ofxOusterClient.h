@@ -145,6 +145,10 @@ private:
     ofMutex metadataMutex;
     string metadata;
     ouster::sensor::sensor_info sensorInfo;
+
+    std::atomic<bool> _bIsRecording;
+    
+    void _endRecording();
     
     
 

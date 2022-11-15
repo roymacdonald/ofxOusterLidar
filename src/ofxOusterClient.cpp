@@ -17,6 +17,7 @@ ofxOusterClient::ofxOusterClient(){
 ofxOusterClient::~ofxOusterClient(){
     ofThread::waitForThread(true, 30000);
     endRecording();
+    _endRecording();
 }
 
 ofxOusterClient::ofxOusterClient(const std::string& hostname_, int lidar_port_ , int imu_port_)
@@ -161,17 +162,22 @@ void ofxOusterClient::threadedFunction(){
                         
                         if (st & sensor::client_state::LIDAR_DATA) {
                             if (sensor::read_lidar_packet(*cli, lidar_buf.data(),packetFormat)) {
-                                if(_recorder){
-                                    ouster::sensor_utils::record_packet(*_recorder.get(),//record_handle& handle,
-                                                                        _hostname,//const std::string& src_ip,
-                                                                        _udp_dest_host,//const std::string& dst_ip,
-                                                                        lidar_port,//int src_port,
-                                                                        lidar_port,//int dst_port,
-                                                                        lidar_buf.data(),//const uint8_t* buf,
-                                                                        lidar_buf.size(),//size_t buffer_size,
-                                                                        timestamp//uint64_t microsecond_timestamp
-                                                                        );
+                                if(_bIsRecording.load()){
+                                    if(_recorder){
+                                        ouster::sensor_utils::record_packet(*_recorder.get(),//record_handle& handle,
+                                                                            _hostname,//const std::string& src_ip,
+                                                                            _udp_dest_host,//const std::string& dst_ip,
+                                                                            lidar_port,//int src_port,
+                                                                            lidar_port,//int dst_port,
+                                                                            lidar_buf.data(),//const uint8_t* buf,
+                                                                            lidar_buf.size(),//size_t buffer_size,
+                                                                            timestamp//uint64_t microsecond_timestamp
+                                                                            );
+                                    }
+                                }else{
+                                    _endRecording();
                                 }
+                                
                                 if (_batchScan(lidar_buf.data(), ls_write)) {
                                       frameCount ++;
                                       lidarScanChannel.send(ls_write);
@@ -183,29 +189,32 @@ void ofxOusterClient::threadedFunction(){
                         }
                         if (st & sensor::client_state::IMU_DATA) {
                             if(sensor::read_imu_packet(*cli, imu_buf.data(), packetFormat)){
-                                if(_recorder){
-                                    ouster::sensor_utils::record_packet(*_recorder.get(),//record_handle& handle,
-                                                                        _hostname,//const std::string& src_ip,
-                                                                        _udp_dest_host,//const std::string& dst_ip,
-                                                                        imu_port,//int src_port,
-                                                                        imu_port,//int dst_port,
-                                                                        imu_buf.data(),//const uint8_t* buf,
-                                                                        imu_buf.size(),//size_t buffer_size,
-                                                                        timestamp//uint64_t microsecond_timestamp
-                                                                        );
+                                if(_bIsRecording.load()){
+                                    if(_recorder){
+                                        ouster::sensor_utils::record_packet(*_recorder.get(),//record_handle& handle,
+                                                                            _hostname,//const std::string& src_ip,
+                                                                            _udp_dest_host,//const std::string& dst_ip,
+                                                                            imu_port,//int src_port,
+                                                                            imu_port,//int dst_port,
+                                                                            imu_buf.data(),//const uint8_t* buf,
+                                                                            imu_buf.size(),//size_t buffer_size,
+                                                                            timestamp//uint64_t microsecond_timestamp
+                                                                            );
+                                    }
+                                }else{
+                                    _endRecording();
                                 }
                                 ofxOusterIMUData imu_data(packetFormat, imu_buf);
                                 imuChannel.send(imu_data);
                             }
                         }
                         if (st & sensor::EXIT) {
-                            endRecording();
                             stopThread();
                             break;
-                            
                         }
                 }
                 endRecording();
+                _endRecording();
             }
         }else{
             cout <<"not setup\n";
@@ -233,6 +242,7 @@ void ofxOusterClient::setMetadata(const string& _metadata){
 
 void ofxOusterClient::_initValues()
 {
+    _bIsRecording = false;
     mode  = ouster::sensor::MODE_UNSPEC;
     ts_mode  = ouster::sensor::TIME_FROM_UNSPEC;
     lidar_port = 0;
@@ -260,11 +270,11 @@ uint64_t ofxOusterClient::getFrameCount(){
 }
 
 bool ofxOusterClient::isRecording(){
-    return _recorder != nullptr;
+    return _bIsRecording;
 }
 
 bool ofxOusterClient::recordToPCap(const string& filepath){
-    if(_recorder){
+    if(_bIsRecording.load()){
         ofLogError("ofxOuster::recordToPCap") << "Recorder already initialized.";
         return false;
     }
@@ -272,21 +282,23 @@ bool ofxOusterClient::recordToPCap(const string& filepath){
     _recorder = ouster::sensor_utils::record_initialize(filepath + ".pcap",
                                                         65536, // taken from the python implementation. Not sure if this is the correct value.
                                                         false);
+    _bIsRecording = true;
     ofJson json;
     json.parse(metadata);
     
     ofSaveJson(filepath + ".json", json);
     
-    
-    //int frag_size, bool use_sll_encapsulation = false);
-    
-    
     return true;
 }
 
 void ofxOusterClient::endRecording(){
-    if(_recorder){
-        ouster::sensor_utils::record_uninitialize(*_recorder.get());
-        _recorder = nullptr;
+    _bIsRecording = false;
+}
+void ofxOusterClient::_endRecording(){
+    if(!_bIsRecording.load()){
+        if(_recorder){
+            ouster::sensor_utils::record_uninitialize(*_recorder.get());
+            _recorder = nullptr;
+        }
     }
 }
